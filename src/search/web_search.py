@@ -1,5 +1,5 @@
 """
-Web search fallback module for ElevateAI.
+Web search fallback module for Thunderbolts.
 Handles external web search when local content is insufficient.
 """
 import requests
@@ -99,7 +99,7 @@ class WebSearchEngine:
                 urls.extend(self._google_library_search(query, **kwargs))
             
             # Fallback to SerpAPI if available
-            elif settings.serpapi_api_key:
+            if settings.serpapi_api_key:
                 urls.extend(self._serpapi_search(query, **kwargs))
             
             else:

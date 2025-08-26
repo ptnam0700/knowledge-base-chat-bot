@@ -1,5 +1,5 @@
 """
-Web interface modules for ElevateAI.
+Web interface modules for Thunderbolts.
 """
 
 from .components import UIComponents

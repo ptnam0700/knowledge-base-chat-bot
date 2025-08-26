@@ -1,5 +1,5 @@
 """
-Metadata management module for ElevateAI vector database.
+Metadata management module for Thunderbolts vector database.
 Handles storage and retrieval of document metadata.
 """
 import json

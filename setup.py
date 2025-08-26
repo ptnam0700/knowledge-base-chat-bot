@@ -1,5 +1,5 @@
 """
-Setup script for ElevateAI application.
+Setup script for Thunderbolts application.
 """
 from setuptools import setup, find_packages
 from pathlib import Path
@@ -19,14 +19,14 @@ if requirements_path.exists():
         ]
 
 setup(
-    name="elevateai",
+    name="Thunderbolts",
     version="1.0.0",
     description="AI-powered content analysis and summarization application with memory system",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="ElevateAI Team",
-    author_email="team@elevateai.com",
-    url="https://github.com/elevateai/elevateai",
+    author="Thunderbolts Team",
+    author_email="team@Thunderbolts.com",
+    url="https://github.com/Thunderbolts/Thunderbolts",
     packages=find_packages(),
     include_package_data=True,
     install_requires=requirements,
@@ -52,12 +52,12 @@ setup(
     keywords="ai, summarization, nlp, text analysis, memory system, streamlit, langchain",
     entry_points={
         "console_scripts": [
-            "elevateai=main:main",
+            "Thunderbolts=main:main",
         ],
     },
     project_urls={
-        "Bug Reports": "https://github.com/elevateai/elevateai/issues",
-        "Source": "https://github.com/elevateai/elevateai",
-        "Documentation": "https://github.com/elevateai/elevateai/wiki",
+        "Bug Reports": "https://github.com/Thunderbolts/Thunderbolts/issues",
+        "Source": "https://github.com/Thunderbolts/Thunderbolts",
+        "Documentation": "https://github.com/Thunderbolts/Thunderbolts/wiki",
     },
 )

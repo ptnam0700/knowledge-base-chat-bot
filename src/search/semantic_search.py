@@ -1,5 +1,5 @@
 """
-Semantic search engine for ElevateAI.
+Semantic search engine for Thunderbolts.
 Handles vector-based similarity search with advanced filtering.
 """
 import numpy as np

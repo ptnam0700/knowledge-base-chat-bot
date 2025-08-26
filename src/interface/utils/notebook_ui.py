@@ -2,11 +2,27 @@ from __future__ import annotations
 
 from typing import List
 
+from src.interface.utils.prompt_text import t
+from src.interface.app_context import get_context
+from src.utils.settings_manager import get_settings
+
+def _get_lang() -> str:
+    try:
+        persisted = get_settings()
+        default_lang = persisted.get('language', 'vi')
+    except Exception:
+        default_lang = 'vi'
+    import streamlit as st
+    lang = st.session_state.get('language')
+    if not lang and 'app_settings' in st.session_state:
+        lang = (st.session_state.app_settings or {}).get('language')
+    return lang or default_lang
+
 
 class NotebookUI:
     @staticmethod
     def tabs_labels() -> List[str]:
-        return ["📚 **Sources**", "📓 **Notebook**", "🎨 **Studio**"]
+        return [t("tab_sources", _get_lang()), t("tab_notebook", _get_lang()), t("tab_studio", _get_lang())]
 
     @staticmethod
     def chat_style_css(max_height: int = 500) -> str:
@@ -14,8 +30,8 @@ class NotebookUI:
         <style>
         .nb-chat-wrapper {{max-height: {max_height}px; overflow-y: auto; padding-right: 8px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; margin: 16px 0;}}
         .nb-chat-item {{margin: 10px 0; display: flex;}}
-        .nb-chat-q {{justify-content: flex-start;}}
-        .nb-chat-a {{justify-content: flex-end;}}
+        .nb-chat-q {{justify-content: flex-end;}}
+        .nb-chat-a {{justify-content: flex-start;}}
         .bubble {{max-width: 75%; padding: 10px 14px; border-radius: 12px;}}
         .q-bubble {{background:#eef2ff; border:1px solid #c7d2fe;}}
         .a-bubble {{background:#ecfdf5; border:1px solid #a7f3d0;}}

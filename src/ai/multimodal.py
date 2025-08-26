@@ -1,5 +1,5 @@
 """
-Multi-modal AI features for ElevateAI.
+Multi-modal AI features for Thunderbolts.
 Handles text-to-speech, speech-to-text, and image generation.
 """
 import base64
@@ -53,7 +53,7 @@ class ImageGenerationResult:
 
 
 class MultiModalAI:
-    """Multi-modal AI capabilities for ElevateAI."""
+    """Multi-modal AI capabilities for Thunderbolts."""
     
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         """

@@ -1,5 +1,5 @@
 """
-Text analysis module for ElevateAI.
+Text analysis module for Thunderbolts.
 Analyzes text content quality, language, and characteristics.
 """
 import re

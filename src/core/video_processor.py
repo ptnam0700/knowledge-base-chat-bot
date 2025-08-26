@@ -1,22 +1,20 @@
 """
-Video processing module for ElevateAI.
+Video processing module for Thunderbolts.
 Handles video file processing and audio extraction.
 """
 from pathlib import Path
 from typing import Optional, Union
 
 try:
-    import moviepy.editor as mp
+    from moviepy.video.io.VideoFileClip import VideoFileClip
     VIDEO_DEPS_AVAILABLE = True
 except ImportError as e:
     print(f"Warning: Video processing dependencies not installed: {e}")
     VIDEO_DEPS_AVAILABLE = False
-    # Create dummy mp module for graceful fallback
-    class DummyMP:
-        class VideoFileClip:
-            def __init__(self, *args, **kwargs):
-                raise VideoProcessingError("MoviePy not available")
-    mp = DummyMP()
+    # Create dummy VideoFileClip class for graceful fallback
+    class VideoFileClip:
+        def __init__(self, *args, **kwargs):
+            raise VideoProcessingError("MoviePy not available")
 
 from .base_processor import BaseProcessor
 from .audio_processor import AudioProcessor
@@ -103,7 +101,7 @@ class VideoProcessor(BaseProcessor):
         
         try:
             # Load video
-            video = mp.VideoFileClip(str(video_path))
+            video = VideoFileClip(str(video_path))
             
             if video.audio is None:
                 raise VideoProcessingError("Video file contains no audio track")
@@ -143,7 +141,7 @@ class VideoProcessor(BaseProcessor):
             return {"error": "Video processing dependencies not available"}
         
         try:
-            video = mp.VideoFileClip(str(video_path))
+            video = VideoFileClip(str(video_path))
             
             info = {
                 "duration": video.duration,
@@ -189,7 +187,7 @@ class VideoProcessor(BaseProcessor):
             raise VideoProcessingError("Video processing dependencies not available")
         
         try:
-            video = mp.VideoFileClip(str(video_path))
+            video = VideoFileClip(str(video_path))
             frame_paths = []
             
             # Extract frames at specified intervals

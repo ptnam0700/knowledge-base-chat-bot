@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional, Union
 
 from config.settings import settings
 from src.utils.logger import logger
-from src.utils.exceptions import ElevateAIException
+from src.utils.exceptions import ThunderboltsException
 
 
 class BaseProcessor(ABC):
@@ -40,7 +40,7 @@ class BaseProcessor(ABC):
             Processed data
             
         Raises:
-            ElevateAIException: If processing fails
+            ThunderboltsException: If processing fails
         """
         pass
     
@@ -119,4 +119,4 @@ class BaseProcessor(ABC):
         """
         error_msg = f"{operation} failed: {str(error)}"
         self.logger.error(error_msg)
-        raise ElevateAIException(error_msg) from error
+        raise ThunderboltsException(error_msg) from error

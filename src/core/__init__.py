@@ -1,5 +1,5 @@
 """
-Core data processing modules for ElevateAI.
+Core data processing modules for Thunderbolts.
 """
 
 from .audio_processor import AudioProcessor

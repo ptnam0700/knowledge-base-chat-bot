@@ -1,78 +1,78 @@
 """
-Custom exceptions for ElevateAI application.
+Custom exceptions for Thunderbolts application.
 """
 
 
-class ElevateAIException(Exception):
-    """Base exception for ElevateAI application."""
+class ThunderboltsException(Exception):
+    """Base exception for Thunderbolts application."""
     pass
 
 
-class FileProcessingError(ElevateAIException):
+class FileProcessingError(ThunderboltsException):
     """Exception raised when file processing fails."""
     pass
 
 
-class AudioProcessingError(ElevateAIException):
+class AudioProcessingError(ThunderboltsException):
     """Exception raised when audio processing fails."""
     pass
 
 
-class VideoProcessingError(ElevateAIException):
+class VideoProcessingError(ThunderboltsException):
     """Exception raised when video processing fails."""
     pass
 
 
-class TextProcessingError(ElevateAIException):
+class TextProcessingError(ThunderboltsException):
     """Exception raised when text processing fails."""
     pass
 
 
-class SpeechToTextError(ElevateAIException):
+class SpeechToTextError(ThunderboltsException):
     """Exception raised when speech-to-text conversion fails."""
     pass
 
 
-class EmbeddingError(ElevateAIException):
+class EmbeddingError(ThunderboltsException):
     """Exception raised when embedding generation fails."""
     pass
 
 
-class VectorDatabaseError(ElevateAIException):
+class VectorDatabaseError(ThunderboltsException):
     """Exception raised when vector database operations fail."""
     pass
 
 
-class SearchError(ElevateAIException):
+class SearchError(ThunderboltsException):
     """Exception raised when search operations fail."""
     pass
 
 
-class WebSearchError(ElevateAIException):
+class WebSearchError(ThunderboltsException):
     """Exception raised when web search fails."""
     pass
 
 
-class LLMError(ElevateAIException):
+class LLMError(ThunderboltsException):
     """Exception raised when LLM operations fail."""
     pass
 
 
-class ConfigurationError(ElevateAIException):
+class ConfigurationError(ThunderboltsException):
     """Exception raised when configuration is invalid."""
     pass
 
 
-class UnsupportedFormatError(ElevateAIException):
+class UnsupportedFormatError(ThunderboltsException):
     """Exception raised when file format is not supported."""
     pass
 
 
-class FileSizeError(ElevateAIException):
+class FileSizeError(ThunderboltsException):
     """Exception raised when file size exceeds limits."""
     pass
 
 
-class TTSProcessingError(ElevateAIException):
+class TTSProcessingError(ThunderboltsException):
     """Exception raised when text-to-speech processing fails."""
     pass

@@ -8,8 +8,17 @@ from typing import Dict, Any
 import toml
 
 from src.interface.components import UIComponents
+from src.interface.app_context import get_context
 from src.utils.settings_manager import settings_manager, get_settings, set_setting
 from config.settings import settings
+from src.interface.utils.prompt_text import UI_TEXTS, SETTINGS_TEXTS, ts, t
+
+
+def _get_lang() -> str:
+    try:
+        return st.session_state.get('language', settings.default_language)
+    except Exception:
+        return 'vi'
 
 
 def save_settings_to_session(settings_dict: Dict[str, Any]):
@@ -45,133 +54,139 @@ def validate_and_save_settings(settings_dict: Dict[str, Any]):
     settings_manager.apply_settings_to_app()
     
     st.success("✅ Settings đã được lưu và áp dụng thành công!")
+    try:
+        st.rerun()
+    except Exception:
+        pass
     return True
 
 
 def render_model_settings():
+    lang = _get_lang()
     """Render phần cài đặt model."""
-    st.subheader("🤖 Model Settings")
+    st.subheader(ts("tab_model", lang))
     
     col1, col2 = st.columns(2)
     
     with col1:
         temperature = st.slider(
-            "Temperature",
+            ts("temperature", lang),
             min_value=0.0,
             max_value=2.0,
-            value=st.session_state.get('temperature', 0.7),
+            value=st.session_state.get('openai_temperature', settings.openai_temperature),
             step=0.1,
-            help="Điều khiển độ ngẫu nhiên trong câu trả lời. Giá trị cao hơn = sáng tạo hơn"
+            help=ts("temperature_help", lang)
         )
         
         max_tokens = st.number_input(
-            "Max Tokens",
+            ts("max_tokens", lang),
             min_value=100,
             max_value=8000,
-            value=st.session_state.get('max_tokens', 2000),
+            value=st.session_state.get('openai_max_tokens', settings.openai_max_tokens),
             step=100,
-            help="Số lượng token tối đa trong câu trả lời"
+            help=ts("max_tokens_help", lang)
         )
         
         top_p = st.slider(
-            "Top P",
+            ts("top_p", lang),
             min_value=0.0,
             max_value=1.0,
-            value=st.session_state.get('top_p', 0.9),
-            step=0.05,
-            help="Điều khiển đa dạng của câu trả lời"
+            value=st.session_state.get('openai_top_p', settings.openai_top_p),
+            step=0.1,
+            help=ts("top_p_help", lang)
         )
     
     with col2:
         frequency_penalty = st.slider(
-            "Frequency Penalty",
+            ts("frequency_penalty", lang),
             min_value=-2.0,
             max_value=2.0,
-            value=st.session_state.get('frequency_penalty', 0.0),
+            value=st.session_state.get('openai_frequency_penalty', settings.openai_frequency_penalty),
             step=0.1,
-            help="Giảm lặp lại từ ngữ"
+            help=""
         )
         
         presence_penalty = st.slider(
-            "Presence Penalty",
+            ts("presence_penalty", lang),
             min_value=-2.0,
             max_value=2.0,
-            value=st.session_state.get('presence_penalty', 0.0),
+            value=st.session_state.get('openai_presence_penalty', settings.openai_presence_penalty),
             step=0.1,
-            help="Khuyến khích thảo luận về chủ đề mới"
+            help=""
         )
         
         model_name = st.selectbox(
-            "Model",
+            ts("model", lang),
             options=["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo", "claude-3-opus", "claude-3-sonnet"],
             index=0,
-            help="Chọn model AI để sử dụng"
+            help=ts("model", lang)
         )
     
     return {
-        'temperature': temperature,
-        'max_tokens': max_tokens,
-        'top_p': top_p,
-        'frequency_penalty': frequency_penalty,
-        'presence_penalty': presence_penalty,
-        'model_name': model_name
+        'openai_temperature': temperature,
+        'openai_max_tokens': max_tokens,
+        'openai_top_p': top_p,
+        'openai_frequency_penalty': frequency_penalty,
+        'openai_presence_penalty': presence_penalty,
+        'openai_chat_model': model_name
     }
 
 
 def render_search_settings():
+    lang = _get_lang()
     """Render phần cài đặt tìm kiếm."""
-    st.subheader("🔍 Search Settings")
+    st.subheader(ts("tab_search", lang))
     
     col1, col2 = st.columns(2)
     
     with col1:
         similarity_threshold = st.slider(
-            "Similarity Threshold",
+            ts("similarity_threshold", lang),
             min_value=0.0,
             max_value=1.0,
-            value=st.session_state.get('similarity_threshold', 0.25),
+            value=st.session_state.get('similarity_threshold', settings.similarity_threshold),
             step=0.05,
-            help="Ngưỡng tương đồng tối thiểu cho kết quả tìm kiếm"
+            help=ts("similarity_threshold", lang)
         )
         
         max_results = st.number_input(
-            "Max Results",
+            ts("max_results_label", lang),
             min_value=1,
             max_value=50,
-            value=st.session_state.get('max_results', 10),
+            value=st.session_state.get('max_results', settings.max_results),
             step=1,
-            help="Số lượng kết quả tìm kiếm tối đa"
+            help=ts("max_results_label", lang)
         )
         
         chunk_size = st.number_input(
-            "Chunk Size",
+            ts("chunk_size", lang),
             min_value=100,
             max_value=2000,
-            value=st.session_state.get('chunk_size', 1000),
+            value=st.session_state.get('chunk_size', settings.chunk_size),
             step=100,
-            help="Kích thước chunk khi xử lý tài liệu"
+            help=ts("chunk_size", lang)
         )
     
     with col2:
         chunk_overlap = st.number_input(
-            "Chunk Overlap",
+            ts("chunk_overlap", lang),
             min_value=0,
             max_value=500,
-            value=st.session_state.get('chunk_overlap', 200),
+            value=st.session_state.get('chunk_overlap', settings.chunk_overlap),
             step=50,
-            help="Độ chồng lấp giữa các chunk"
+            help=ts("chunk_overlap", lang)
         )
         
         enable_web_search = st.checkbox(
-            "Enable Web Search",
-            value=st.session_state.get('enable_web_search', False),
-            help="Tìm kiếm web khi kết quả local không đủ"
+            ts("enable_web_search", lang),
+            value=st.session_state.get('enable_web_search', settings.enable_web_search),
+            help=ts("enable_web_search", lang)
         )
         
         enable_function_calling = st.checkbox(
-            "Enable Function Calling",
-            value=st.session_state.get('enable_function_calling', False),
-            help="Sử dụng function calling để phân tích nâng cao"
+            ts("enable_function_calling", lang),
+            value=st.session_state.get('enable_function_calling', settings.enable_function_calling),
+            help=ts("enable_function_calling", lang)
         )
     
     return {
@@ -185,46 +200,47 @@ def render_search_settings():
 
 
 def render_audio_settings():
+    lang = _get_lang()
     """Render phần cài đặt âm thanh."""
-    st.subheader("🔊 Audio Settings")
+    st.subheader(ts("tab_audio", lang))
     
     col1, col2 = st.columns(2)
     
     with col1:
         enable_tts = st.checkbox(
-            "Enable Text-to-Speech",
-            value=st.session_state.get('enable_tts', True),
-            help="Tạo âm thanh cho tóm tắt"
+            ts("enable_tts", lang),
+            value=st.session_state.get('enable_tts', settings.enable_tts),
+            help=ts("enable_tts", lang)
         )
         
         tts_voice = st.selectbox(
-            "TTS Voice",
+            ts("tts_voice", lang),
             options=['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'],
-            index=0,
-            help="Giọng nói cho text-to-speech"
+            index=['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'].index(settings.tts_voice) if settings.tts_voice in ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'] else 0,
+            help=ts("tts_voice", lang)
         )
         
         audio_sample_rate = st.selectbox(
-            "Audio Sample Rate",
+            ts("audio_sample_rate", lang),
             options=[8000, 16000, 22050, 44100],
-            index=1,
-            help="Tần số lấy mẫu âm thanh"
+            index=[8000, 16000, 22050, 44100].index(settings.audio_sample_rate) if settings.audio_sample_rate in [8000, 16000, 22050, 44100] else 1,
+            help=ts("audio_sample_rate", lang)
         )
     
     with col2:
         noise_reduction = st.slider(
-            "Noise Reduction",
+            ts("noise_reduction", lang),
             min_value=0.0,
             max_value=1.0,
-            value=st.session_state.get('noise_reduction', 0.8),
+            value=st.session_state.get('noise_reduction', settings.noise_reduction_strength),
             step=0.1,
-            help="Độ mạnh giảm tiếng ồn"
+            help=ts("noise_reduction", lang)
         )
         
         enable_vocal_separation = st.checkbox(
-            "Enable Vocal Separation",
-            value=st.session_state.get('enable_vocal_separation', False),
-            help="Tách giọng nói khỏi nhạc nền"
+            ts("enable_vocal_separation", lang),
+            value=st.session_state.get('enable_vocal_separation', settings.enable_vocal_separation),
+            help=ts("enable_vocal_separation", lang)
         )
     
     return {
@@ -237,53 +253,54 @@ def render_audio_settings():
 
 
 def render_memory_settings():
+    lang = _get_lang()
     """Render phần cài đặt bộ nhớ."""
-    st.subheader("🧠 Memory Settings")
+    st.subheader(ts("tab_memory", lang))
     
     col1, col2 = st.columns(2)
     
     with col1:
         enable_memory = st.checkbox(
-            "Enable Memory System",
+            ts("enable_memory", lang),
             value=st.session_state.get('enable_memory', True),
-            help="Ghi nhớ ngữ cảnh và thông tin cuộc trò chuyện"
+            help=ts("enable_memory", lang)
         )
         
         max_memory_context = st.slider(
-            "Max Memory Context",
+            ts("max_memory_context", lang),
             min_value=1,
             max_value=20,
             value=st.session_state.get('max_memory_context', 3),
-            help="Số lượng bản ghi bộ nhớ tối đa sử dụng cho ngữ cảnh"
+            help=ts("max_memory_context", lang)
         )
         
         memory_consolidation_threshold = st.number_input(
-            "Memory Consolidation Threshold",
+            ts("memory_consolidation_threshold", lang),
             min_value=5,
             max_value=50,
             value=st.session_state.get('memory_consolidation_threshold', 10),
-            help="Ngưỡng để củng cố bộ nhớ ngắn hạn thành dài hạn"
+            help=ts("memory_consolidation_threshold", lang)
         )
     
     with col2:
         store_conversations = st.checkbox(
-            "Store Conversations",
+            ts("store_conversations", lang),
             value=st.session_state.get('store_conversations', True),
-            help="Lưu lịch sử cuộc trò chuyện"
+            help=ts("store_conversations", lang)
         )
         
         memory_retention_days = st.number_input(
-            "Memory Retention (days)",
+            ts("memory_retention_days", lang),
             min_value=1,
             max_value=365,
             value=st.session_state.get('memory_retention_days', 30),
-            help="Số ngày lưu trữ bộ nhớ"
+            help=ts("memory_retention_days", lang)
         )
         
         auto_cleanup = st.checkbox(
-            "Auto Cleanup Old Memories",
+            ts("auto_cleanup", lang),
             value=st.session_state.get('auto_cleanup', True),
-            help="Tự động dọn dẹp bộ nhớ cũ"
+            help=ts("auto_cleanup", lang)
         )
     
     return {
@@ -297,107 +314,84 @@ def render_memory_settings():
 
 
 def render_interface_settings():
-    """Render phần cài đặt giao diện."""
-    st.subheader("🎨 Interface Settings")
+    lang = _get_lang()
+    st.subheader(ts("tab_interface", lang))
     
     col1, col2 = st.columns(2)
     
     with col1:
-        theme = st.selectbox(
-            "Theme",
-            options=["light", "dark"],
-            index=0,
-            help="Chọn giao diện sáng hoặc tối"
-        )
-        
+        current_lang = st.session_state.get('language', settings.default_language)
         language = st.selectbox(
-            "Language",
+            ts("language", lang),
             options=["vi", "en", "zh", "ja", "ko"],
-            index=0,
-            help="Ngôn ngữ giao diện"
+            index=["vi", "en", "zh", "ja", "ko"].index(current_lang) if current_lang in ["vi", "en", "zh", "ja", "ko"] else 0,
+            help=ts("language", lang),
+            key='language'
         )
         
         auto_save = st.checkbox(
-            "Auto Save Settings",
-            value=st.session_state.get('auto_save', True),
-            help="Tự động lưu cài đặt"
+            ts("auto_save", lang),
+            value=st.session_state.get('auto_save', settings.auto_save),
+            help=ts("auto_save", lang)
         )
     
     with col2:
-        show_processing_time = st.checkbox(
-            "Show Processing Time",
-            value=st.session_state.get('show_processing_time', True),
-            help="Hiển thị thời gian xử lý"
-        )
-        
-        show_confidence_score = st.checkbox(
-            "Show Confidence Score",
-            value=st.session_state.get('show_confidence_score', True),
-            help="Hiển thị điểm tin cậy"
-        )
-        
-        enable_animations = st.checkbox(
-            "Enable Animations",
-            value=st.session_state.get('enable_animations', True),
-            help="Bật hiệu ứng animation"
-        )
+        # Removed: show_processing_time, show_confidence_score, enable_animations
+        pass
     
     return {
-        'theme': theme,
         'language': language,
         'auto_save': auto_save,
-        'show_processing_time': show_processing_time,
-        'show_confidence_score': show_confidence_score,
-        'enable_animations': enable_animations
     }
 
 
 def render_advanced_settings():
+    lang = _get_lang()
     """Render phần cài đặt nâng cao."""
-    st.subheader("⚙️ Advanced Settings")
+    st.subheader(ts("tab_advanced", lang))
     
     col1, col2 = st.columns(2)
     
     with col1:
         max_file_size_mb = st.number_input(
-            "Max File Size (MB)",
+            ts("max_file_size", lang),
             min_value=10,
             max_value=1000,
-            value=st.session_state.get('max_file_size_mb', 500),
+            value=st.session_state.get('max_file_size_mb', settings.max_file_size_mb),
             step=10,
-            help="Kích thước file tối đa được phép upload"
+            help=ts("max_file_size", lang)
         )
         
         enable_debug_mode = st.checkbox(
-            "Enable Debug Mode",
-            value=st.session_state.get('enable_debug_mode', False),
-            help="Bật chế độ debug để xem thông tin chi tiết"
+            ts("enable_debug_mode", lang),
+            value=st.session_state.get('enable_debug_mode', settings.debug),
+            help=ts("enable_debug_mode", lang)
         )
         
         cache_enabled = st.checkbox(
-            "Enable Caching",
-            value=st.session_state.get('cache_enabled', True),
-            help="Bật cache để tăng tốc độ"
+            ts("enable_caching", lang),
+            value=st.session_state.get('cache_enabled', settings.cache_enabled),
+            help=ts("enable_caching", lang)
         )
     
     with col2:
         log_level = st.selectbox(
-            "Log Level",
+            ts("log_level", lang),
             options=["DEBUG", "INFO", "WARNING", "ERROR"],
-            index=1,
-            help="Mức độ log"
+            index=["DEBUG", "INFO", "WARNING", "ERROR"].index(settings.log_level) if settings.log_level in ["DEBUG", "INFO", "WARNING", "ERROR"] else 1,
+            help=ts("log_level", lang)
         )
         
         enable_metrics = st.checkbox(
-            "Enable Metrics Collection",
-            value=st.session_state.get('enable_metrics', True),
-            help="Thu thập metrics để cải thiện hiệu suất"
+            ts("enable_metrics", lang),
+            value=st.session_state.get('enable_metrics', settings.enable_metrics),
+            help=ts("enable_metrics", lang)
         )
         
         backup_enabled = st.checkbox(
-            "Enable Auto Backup",
-            value=st.session_state.get('backup_enabled', True),
-            help="Tự động sao lưu dữ liệu"
+            ts("backup_enabled", lang),
+            value=st.session_state.get('backup_enabled', settings.backup_enabled),
+            help=ts("backup_enabled", lang)
         )
     
     return {
@@ -412,15 +406,12 @@ def render_advanced_settings():
 
 def main():
     """Main function for Settings page."""
-    st.set_page_config(
-        page_title="Settings - ElevateAI",
-        page_icon="⚙️",
-        layout="wide"
-    )
+    st.set_page_config(page_title="Settings - Thunderbolts", page_icon="⚙️", layout="wide")
     
     # Header
-    st.title("⚙️ Settings")
-    st.markdown("Cấu hình các thông số cho ứng dụng ElevateAI")
+    lang = st.session_state.get('language', settings.default_language)
+    st.title(ts("settings_title", lang))
+    st.markdown(ts("settings_subtitle", lang))
     st.markdown("---")
     
     # Load current settings
@@ -431,32 +422,32 @@ def main():
         if key not in st.session_state:
             st.session_state[key] = value
     
-    # Create tabs for different setting categories
+    # Create tabs for different setting categories (Interface, Model, Search, Audio, Memory, Advanced)
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-        "🤖 Model", "🔍 Search", "🔊 Audio", "🧠 Memory", "🎨 Interface", "⚙️ Advanced"
+        ts("tab_interface", lang), ts("tab_model", lang), ts("tab_search", lang), ts("tab_audio", lang), ts("tab_memory", lang), ts("tab_advanced", lang)
     ])
     
     all_settings = {}
     
     with tab1:
+        interface_settings = render_interface_settings()
+        all_settings.update(interface_settings)
+    
+    with tab2:
         model_settings = render_model_settings()
         all_settings.update(model_settings)
     
-    with tab2:
+    with tab3:
         search_settings = render_search_settings()
         all_settings.update(search_settings)
     
-    with tab3:
+    with tab4:
         audio_settings = render_audio_settings()
         all_settings.update(audio_settings)
     
-    with tab4:
+    with tab5:
         memory_settings = render_memory_settings()
         all_settings.update(memory_settings)
-    
-    with tab5:
-        interface_settings = render_interface_settings()
-        all_settings.update(interface_settings)
     
     with tab6:
         advanced_settings = render_advanced_settings()
@@ -466,36 +457,36 @@ def main():
     st.markdown("---")
     
     # Import/Export section
-    with st.expander("📁 Import/Export Settings", expanded=False):
+    with st.expander(ts("import_export_title", lang), expanded=False):
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown("**Import Settings:**")
+            st.markdown(f"**{ts('import_settings_section', lang)}:**")
             uploaded_file = st.file_uploader(
-                "Choose a settings file",
+                ts("choose_settings_file", lang),
                 type=['json'],
-                help="Upload a previously exported settings file"
+                help=ts("upload_settings_help", lang)
             )
             
             if uploaded_file is not None:
                 try:
                     settings_content = uploaded_file.read().decode('utf-8')
-                    if st.button("📥 Import Settings"):
+                    if st.button(ts("btn_import_settings", lang)):
                         if settings_manager.import_settings(settings_content):
-                            st.success("✅ Settings imported successfully!")
+                            st.success(ts("import_success", lang))
                             st.rerun()
                         else:
-                            st.error("❌ Failed to import settings")
+                            st.error(ts("import_failed", lang))
                 except Exception as e:
-                    st.error(f"❌ Error reading file: {e}")
+                    st.error(f"{ts('file_read_error', lang)}: {e}")
         
         with col2:
-            st.markdown("**Export Settings:**")
+            st.markdown(f"**{ts('export_settings_section', lang)}:**")
             settings_json = settings_manager.export_settings()
             st.download_button(
-                label="📤 Download Current Settings",
+                label=ts("btn_download_current_settings", lang),
                 data=settings_json,
-                file_name="elevateai_settings.json",
+                file_name="Thunderbolts_settings.json",
                 mime="application/json",
                 use_container_width=True
             )
@@ -504,60 +495,20 @@ def main():
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("💾 Save & Apply", use_container_width=True, type="primary"):
+        if st.button(ts("save_apply", lang), use_container_width=True, type="primary"):
             validate_and_save_settings(all_settings)
     
     with col2:
-        if st.button("🔄 Reset to Defaults", use_container_width=True):
-            if st.button("⚠️ Confirm Reset", key="confirm_reset"):
+        if st.button(ts("reset_defaults", lang), use_container_width=True):
+            if st.button(ts("confirm_reset", lang), key="confirm_reset"):
                 settings_manager.reset_to_defaults()
                 st.success("✅ Settings reset to defaults!")
                 st.rerun()
     
     with col3:
-        if st.button("📊 Settings Summary", use_container_width=True):
+        if st.button(ts("settings_summary", lang), use_container_width=True):
             summary = settings_manager.get_settings_summary()
             st.json(summary)
-    
-    # Settings preview and information
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        with st.expander("📋 Current Settings Preview", expanded=False):
-            st.json(all_settings)
-    
-    with col2:
-        st.markdown("### ℹ️ Information")
-        st.markdown("""
-        **Settings Priority:**
-        1. File Settings (vĩnh viễn)
-        2. Session Settings (tạm thời)
-        3. Default Settings
-        
-        **Quick Tips:**
-        - Use "Save & Apply" to apply changes immediately
-        - Export settings for backup
-        - Import settings to restore configuration
-        """)
-        
-        # Show current settings summary
-        st.markdown("### 📊 Current Summary")
-        summary = settings_manager.get_settings_summary()
-        
-        for category, settings in summary.items():
-            st.markdown(f"**{category.title()}:**")
-            for key, value in settings.items():
-                if isinstance(value, bool):
-                    display_value = "✅" if value else "❌"
-                else:
-                    display_value = str(value)
-                st.markdown(f"• {key}: {display_value}")
-            st.markdown("")
-    
-    # Footer
-    st.markdown("---")
-    st.markdown("*Settings will be applied to the entire application. Some changes may require a restart to take full effect.*")
-
 
 if __name__ == "__main__":
     main()

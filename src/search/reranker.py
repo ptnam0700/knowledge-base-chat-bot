@@ -1,5 +1,5 @@
 """
-Reranking module for ElevateAI.
+Reranking module for Thunderbolts.
 Improves search result ranking using various reranking strategies.
 """
 import numpy as np

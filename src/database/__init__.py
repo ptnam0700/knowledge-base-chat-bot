@@ -1,5 +1,5 @@
 """
-Vector database and embedding modules for ElevateAI.
+Vector database and embedding modules for Thunderbolts.
 """
 
 from .embedding_generator import EmbeddingGenerator

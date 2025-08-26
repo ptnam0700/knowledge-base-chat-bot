@@ -1,5 +1,5 @@
 """
-Settings Manager for ElevateAI application.
+Settings Manager for Thunderbolts application.
 Handles loading, saving, and applying settings across the application.
 """
 
@@ -55,12 +55,8 @@ class SettingsManager:
             'auto_cleanup': True,
             
             # Interface settings
-            'theme': 'light',
             'language': 'vi',
             'auto_save': True,
-            'show_processing_time': True,
-            'show_confidence_score': True,
-            'enable_animations': True,
             
             # Advanced settings
             'max_file_size_mb': 500,
@@ -145,15 +141,14 @@ class SettingsManager:
         """Apply current settings to the application."""
         current_settings = self.load_settings()
         
-        # Apply theme
-        if current_settings.get('theme') == 'dark':
-            # Note: Streamlit doesn't support dynamic theme switching
-            # This would need to be handled in the main app configuration
-            pass
+        # Theme removed; rely on Streamlit global theme configuration
         
         # Apply language
         language = current_settings.get('language', 'vi')
-        # Set language for the application
+        try:
+            st.session_state['language'] = language
+        except Exception:
+            pass
         
         # Apply debug mode
         if current_settings.get('enable_debug_mode'):
@@ -163,6 +158,40 @@ class SettingsManager:
         # Apply log level
         log_level = current_settings.get('log_level', 'INFO')
         # Set logging level
+        
+        # Apply AI model settings to LangchainLLMClient if available
+        try:
+            import streamlit as st
+            if "_app_context" in st.session_state:
+                context = st.session_state._app_context
+                
+                # Update LangchainLLMClient with new settings
+                if context.get("llm_client") and hasattr(context["llm_client"], "update_config"):
+                    ai_settings = {}
+                    
+                    # OpenAI model parameters
+                    if 'openai_temperature' in current_settings:
+                        ai_settings['temperature'] = current_settings['openai_temperature']
+                    if 'openai_max_tokens' in current_settings:
+                        ai_settings['max_tokens'] = current_settings['openai_max_tokens']
+                    if 'openai_top_p' in current_settings:
+                        ai_settings['top_p'] = current_settings['openai_top_p']
+                    if 'openai_frequency_penalty' in current_settings:
+                        ai_settings['frequency_penalty'] = current_settings['openai_frequency_penalty']
+                    if 'openai_presence_penalty' in current_settings:
+                        ai_settings['presence_penalty'] = current_settings['openai_presence_penalty']
+                    if 'openai_chat_model' in current_settings:
+                        ai_settings['model_name'] = current_settings['openai_chat_model']
+                    
+                    if ai_settings:
+                        context["llm_client"].update_config(ai_settings)
+                        print(f"✅ Updated LangchainLLMClient with new settings: {ai_settings}")
+                
+                # Update other components if needed
+                # TODO: Add more component updates here
+                
+        except Exception as e:
+            print(f"Warning: Failed to apply AI settings: {e}")
         
         return current_settings
     
@@ -259,7 +288,7 @@ class SettingsManager:
                 'max_memory_context': settings.get('max_memory_context', 3)
             },
             'interface': {
-                'theme': settings.get('theme', 'light'),
+                # theme removed
                 'language': settings.get('language', 'vi')
             }
         }

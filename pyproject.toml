@@ -1,9 +1,9 @@
 [project]
-name = "elevateai"
+name = "Thunderbolts"
 version = "1.0.0"
 description = "AI-powered video and text summarization application"
 authors = [
-    {name = "ElevateAI Team", email = "team@elevateai.com"}
+    {name = "Thunderbolts Team", email = "team@Thunderbolts.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.9"
@@ -91,7 +91,7 @@ extend-exclude = '''
 profile = "black"
 multi_line_output = 3
 line_length = 88
-known_first_party = ["elevateai"]
+known_first_party = ["Thunderbolts"]
 
 [tool.mypy]
 python_version = "3.9"

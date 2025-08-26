@@ -1,12 +1,12 @@
-# Hướng dẫn sử dụng trang Settings - ElevateAI
+# Hướng dẫn sử dụng trang Settings - Thunderbolts
 
 ## Tổng quan
 
-Trang Settings cho phép bạn tùy chỉnh các thông số của ứng dụng ElevateAI để tối ưu hóa hiệu suất và trải nghiệm sử dụng.
+Trang Settings cho phép bạn tùy chỉnh các thông số của ứng dụng Thunderbolts để tối ưu hóa hiệu suất và trải nghiệm sử dụng.
 
 ## Cách truy cập
 
-1. Mở ứng dụng ElevateAI
+1. Mở ứng dụng Thunderbolts
 2. Chuyển đến trang "Settings" trong menu điều hướng
 3. Hoặc nhấn nút "⚙️ Open Settings" trong sidebar
 

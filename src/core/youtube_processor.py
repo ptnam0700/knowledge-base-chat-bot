@@ -1,5 +1,5 @@
 """
-YouTube processing module for ElevateAI.
+YouTube processing module for Thunderbolts.
 Handles YouTube video downloading and content extraction.
 """
 import os
@@ -67,11 +67,23 @@ class YouTubeProcessor(SimpleBaseProcessor):
         
         # YouTube download configuration
         self.ydl_opts = {
-            'format': 'best[height<=720]',  # Limit to 720p for faster processing
+            'format': 'best[height<=720]/best',  # Fallback to any available format
             'outtmpl': '%(title)s.%(ext)s',
             'quiet': True,
             'no_warnings': True,
             'extract_flat': False,
+            # Add user agent to avoid 403 errors
+            'http_headers': {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            },
+            # Add additional options to handle restrictions
+            'nocheckcertificate': True,
+            'ignoreerrors': True,
+            'no_color': True,
+            # Try different extractors if one fails
+            'extractor_retries': 3,
+            'fragment_retries': 3,
+            'retries': 3,
         }
     
     def process(self, input_data: Union[str, Path, bytes], **kwargs) -> Dict[str, Any]:
@@ -147,10 +159,15 @@ class YouTubeProcessor(SimpleBaseProcessor):
             raise VideoProcessingError("YouTube processing dependencies not available")
         
         try:
-            with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
+            # Use the configured ydl_opts instead of basic config
+            with yt_dlp.YoutubeDL(self.ydl_opts) as ydl:
+                print(f"🔍 Extracting info for YouTube URL: {url}")
                 info = ydl.extract_info(url, download=False)
                 
-                return {
+                if not info:
+                    raise VideoProcessingError("Failed to extract video info - no data returned")
+                
+                result = {
                     "title": info.get("title", "Unknown"),
                     "uploader": info.get("uploader", "Unknown"),
                     "duration": info.get("duration", 0),
@@ -158,8 +175,14 @@ class YouTubeProcessor(SimpleBaseProcessor):
                     "upload_date": info.get("upload_date", ""),
                     "description": info.get("description", "")[:200],
                 }
+                
+                print(f"✅ Successfully extracted info: {result['title']} by {result['uploader']}")
+                return result
+                
         except Exception as e:
-            raise VideoProcessingError(f"Failed to get video info: {e}")
+            error_msg = f"Failed to get video info for {url}: {e}"
+            print(f"❌ {error_msg}")
+            raise VideoProcessingError(error_msg)
     
     def _download_video(self, url: str) -> Path:
         """Download YouTube video to temporary file."""
@@ -188,7 +211,8 @@ class YouTubeProcessor(SimpleBaseProcessor):
     def _extract_metadata(self, url: str, video_path: Path) -> Dict[str, Any]:
         """Extract metadata from YouTube video."""
         try:
-            with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
+            # Use the configured ydl_opts instead of basic config
+            with yt_dlp.YoutubeDL(self.ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
                 
                 return {
@@ -220,7 +244,8 @@ class YouTubeProcessor(SimpleBaseProcessor):
             raise VideoProcessingError("YouTube processing dependencies not available")
         
         try:
-            with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
+            # Use the configured ydl_opts instead of basic config
+            with yt_dlp.YoutubeDL(self.ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
                 
                 return {

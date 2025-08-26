@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Simple startup script for ElevateAI that ensures conda Project_1 environment.
+Simple startup script for Thunderbolts that ensures conda Project_1 environment.
 """
 
 import sys
@@ -30,7 +30,7 @@ def start_streamlit_app():
         # Use the main app entry point
         app_path = Path(__file__).parent / "src" / "interface" / "app.py"
         
-        print("🚀 Starting ElevateAI Streamlit application...")
+        print("🚀 Starting Thunderbolts Streamlit application...")
         print("📱 Open your browser to: http://localhost:8501")
         print("⏹️  Press Ctrl+C to stop the application")
         print("-" * 50)
@@ -54,7 +54,7 @@ def start_streamlit_app():
 
 def main():
     """Main startup function."""
-    print("🚀 Starting ElevateAI Application")
+    print("🚀 Starting Thunderbolts Application")
     print("=" * 40)
 
     # Check dependencies
