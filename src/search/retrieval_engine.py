@@ -1,5 +1,5 @@
 """
-Multi-hop retrieval engine for ElevateAI.
+Multi-hop retrieval engine for Thunderbolts.
 Handles complex queries with iterative retrieval and context building.
 """
 from typing import List, Dict, Any, Optional, Tuple

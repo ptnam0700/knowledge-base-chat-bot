@@ -9,6 +9,7 @@ import re
 
 from src.interface.notebooks import store
 from src.interface.app_context import get_context
+from src.utils.settings_manager import get_settings
 from src.interface.notebooks.ingest import ingest_uploaded_files, ingest_url
 from src.interface.utils.notebook_helper import NotebookHelper
 import hashlib
@@ -24,15 +25,27 @@ from src.interface.utils.prompt_text import (
     MINDMAP_JSON_INSTRUCTION_VI,
     NO_RESULTS_SYSTEM_VI,
     t,
+    ts,
 )
 
 def _get_lang() -> str:
     try:
-        ctx = get_context()
-        default_lang = (ctx.get('settings') or {}).get('default_language', 'vi') if isinstance(ctx, dict) else 'vi'
+        persisted = get_settings()
+        default_lang = persisted.get('language', 'vi')
     except Exception:
         default_lang = 'vi'
-    return st.session_state.get('language', default_lang)
+    # Prefer explicit language in session; fallback to app_settings, then default
+    lang = st.session_state.get('language')
+    if not lang and 'app_settings' in st.session_state:
+        lang = (st.session_state.app_settings or {}).get('language')
+    if not lang:
+        lang = default_lang
+    # Normalize and persist for consistency across pages
+    try:
+        st.session_state['language'] = lang
+    except Exception:
+        pass
+    return lang
 
 # Thread-safe in-memory task status (avoid using Streamlit APIs inside threads)
 _TASK_STATUS: dict[str, dict] = {}
@@ -868,10 +881,10 @@ def _render_filters():
 
 def _render_filters_and_sorting():
     """Render filters and sorting options in a single expandable section."""
-    with st.expander("🔍 Filter & Sort Notebooks", expanded=False):
+    with st.expander(t("filter_sort_title", _get_lang()), expanded=False):
         # Initialize default sort option in session state
         if 'notebook_sort_option' not in st.session_state:
-            st.session_state.notebook_sort_option = "Date Created (Newest First)"
+            st.session_state.notebook_sort_option = "date_new"
         
         # Check if sort option changed and clear cache if needed
         previous_sort = st.session_state.get('previous_sort_option', st.session_state.notebook_sort_option)
@@ -886,16 +899,16 @@ def _render_filters_and_sorting():
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            q = st.text_input("Search by name/desc/tag", key="home_q", placeholder="Type to search...")
-            favorite_only = st.checkbox("Favorites only", key="home_fav")
+            q = st.text_input(t("search_by_name_desc_tag", _get_lang()), key="home_q", placeholder=t("search_by_name_desc_tag", _get_lang()))
+            favorite_only = st.checkbox(t("favorites_only", _get_lang()), key="home_fav")
         
         with col2:
-            date_from = st.date_input("From date", value=None, key="home_from")
-            date_to = st.date_input("To date", value=None, key="home_to")
+            date_from = st.date_input(t("date_from", _get_lang()), value=None, key="home_from")
+            date_to = st.date_input(t("date_to", _get_lang()), value=None, key="home_to")
         
         with col3:
             st.write("")
-            if st.button("Clear filters", key="clear_filters"):
+            if st.button(t("clear_filters", _get_lang()), key="clear_filters"):
                 st.session_state.pop("home_q", None)
                 st.session_state.pop("home_fav", None)
                 st.session_state.pop("home_from", None)
@@ -907,26 +920,41 @@ def _render_filters_and_sorting():
         sort_col1, sort_col2 = st.columns([1, 1])
         
         with sort_col1:
+            # Use stable internal keys; map to i18n labels with format_func
+            sort_options = [
+                "date_new",
+                "date_old",
+                "updated",
+                "name_az",
+                "name_za",
+            ]
             sort_by = st.selectbox(
-                "Sort by",
-                ["Date Created (Newest First)", "Date Created (Oldest First)", "Last Updated", "Name (A-Z)", "Name (Z-A)"],
+                t("sort_by", _get_lang()),
+                options=sort_options,
+                format_func=lambda k: {
+                    "date_new": t("sort_option_date_new", _get_lang()),
+                    "date_old": t("sort_option_date_old", _get_lang()),
+                    "updated": t("sort_option_updated", _get_lang()),
+                    "name_az": t("sort_option_name_az", _get_lang()),
+                    "name_za": t("sort_option_name_za", _get_lang()),
+                }.get(k, k),
                 key="notebook_sort_option",
-                help="Choose how to sort notebooks (saved for this session)"
+                help=t("sort_by", _get_lang())
             )
         
         with sort_col2:
             # Show current sorting method info
-            if sort_by == "Date Created (Newest First)":
-                st.success("✅ **Stable sorting**: Newest first")
-            elif sort_by == "Date Created (Oldest First)":
-                st.success("✅ **Stable sorting**: Oldest first")
-            elif sort_by == "Last Updated":
-                st.warning("⚠️ **Dynamic sorting**: May change position")
+            if sort_by == "date_new":
+                st.success(t("stable_sort_info_new", _get_lang()))
+            elif sort_by == "date_old":
+                st.success(t("stable_sort_info_old", _get_lang()))
+            elif sort_by == "updated":
+                st.warning(t("dynamic_sort_info", _get_lang()))
             else:
-                st.info("ℹ️ **Alphabetical sorting**: By name")
+                st.info(t("alphabet_sort_info", _get_lang()))
         
         # Add tip about sorting
-        st.caption("💡 **Tip**: Use 'Date Created' for stable order, 'Last Updated' for dynamic order")
+        st.caption(t("alphabet_sort_info", _get_lang()))
     
     return q, favorite_only, date_from.isoformat() if date_from else None, date_to.isoformat() if date_to else None, sort_by
 
@@ -1285,7 +1313,8 @@ def _render_sources_panel(nb: store.Notebook):
     url = st.text_input(
         t("or_add_link", lang),
         key="nb_url",
-        placeholder="Enter urls, youtube links,...",)
+        placeholder=t("enter_urls_placeholder", lang),
+    )
     # Internet search UI (keys are namespaced per-notebook to avoid cross-notebook leakage)
     st.markdown(t("search_internet", lang))
     with st.container():
@@ -2053,7 +2082,7 @@ def _render_create_view():
     is_edit_mode = edit_notebook_id is not None
 
     if is_edit_mode:
-        st.title("Edit notebook")
+        st.title(t("edit_notebook", _get_lang()))
         notebook = store.get_notebook(edit_notebook_id)
         if not notebook:
             st.error("Notebook not found")
@@ -2061,33 +2090,33 @@ def _render_create_view():
             st.rerun()
             return
     else:
-        st.title("Create a new notebook")
+        st.title(t("create_notebook", _get_lang()))
 
     with st.form("create_notebook_form"):
         name = st.text_input(
-            "Notebook name",
+            t("field_notebook_name", _get_lang()),
             placeholder="e.g., Marketing Q4 Reports",
             value=notebook.name if is_edit_mode else ""
         )
         desc = st.text_area(
-            "Description (optional)",
+            t("field_description_optional", _get_lang()),
             value=notebook.description if is_edit_mode else ""
         )
         tags = st.text_input(
-            "Tags (comma-separated)",
+            t("field_tags", _get_lang()),
             value=", ".join(notebook.tags) if is_edit_mode and notebook.tags else ""
         )
         uploaded = st.file_uploader(
-            "Upload files",
+            t("field_upload_files", _get_lang()),
             type=["mp4","avi","mov","mkv","mp3","wav","pdf","docx","txt","xlsx"],
             accept_multiple_files=True,
         )
-        url = st.text_input("Add a link (web page or YouTube)")
-        submitted = st.form_submit_button("Save" if is_edit_mode else "Create", type="primary")
+        url = st.text_input(t("field_add_link", _get_lang()))
+        submitted = st.form_submit_button(t("btn_save", _get_lang()) if is_edit_mode else t("btn_create", _get_lang()), type="primary")
 
     if submitted:
         if not name.strip():
-            st.error("Please provide a notebook name")
+            st.error(t("error_name_required", _get_lang()))
             return
 
         if is_edit_mode:
@@ -2097,7 +2126,7 @@ def _render_create_view():
                 description=desc.strip(),
                 tags=[t.strip() for t in tags.split(',') if t.strip()]
             )
-            st.success("Notebook updated successfully!")
+            st.success(t("msg_notebook_updated", _get_lang()))
             st.session_state.pop("edit_notebook_id", None)
             st.session_state["current_notebook_id"] = edit_notebook_id
             st.query_params["view"] = "notebook"
@@ -2113,12 +2142,12 @@ def _render_create_view():
                 added += ingest_url(nb.id, url)
                 store.add_source(nb.id, type=("youtube" if ("youtube.com" in url or "youtu.be" in url) else "url"), title=url, source_path_or_url=url)
 
-            st.success(f"Notebook created. Added {added} chunks to knowledge base.")
+            st.success(t("msg_notebook_created", _get_lang()).format(n=added))
             st.session_state["current_notebook_id"] = nb.id
             st.query_params["view"] = "notebook"
             st.rerun()
 
-    if st.button("← Back to Notebooks"):
+    if st.button(t("back_to_notebooks", _get_lang())):
         st.session_state.pop("edit_notebook_id", None)
         st.query_params["view"] = "list"
         st.rerun()
@@ -2176,7 +2205,7 @@ def main():
                 f"**📄 {sources_count} sources** • **🏷️ {tags_text}** • **📅 {created_date}**"
             )
         with header_cols[1]:
-            if st.button("📓 Notebooks"):
+            if st.button("📓 " + t("your_notebooks", _get_lang())):
                 st.query_params["view"] = "list"
                 st.rerun()
 
@@ -2189,7 +2218,7 @@ def main():
             _render_chat(nb)
 
         with tab_studio:
-            with st.expander("**🎥 Studio**", expanded=True):
+            with st.expander(t("studio_section", _get_lang()), expanded=True):
                 # Compact 3x2 grid: Generate | Download (adjacent)
                 # Row 1: DOCX
                 r1c1, r1c2 = st.columns([10, 1])
@@ -2258,17 +2287,17 @@ def main():
                             st.download_button("⬇️", f, file_name=png_path.name, help=t("download_mindmap_help", _get_lang()) + " (PNG)")
 
             # Notes section (renamed from Studio inner content)
-            with st.expander("**📝 Notes**", expanded=True):
+            with st.expander(t("notes_section", _get_lang()), expanded=True):
                 _render_studio_panel(nb)
             st.divider()
-            with st.expander("**⚙️ Settings**", expanded=False):
+            with st.expander(t("settings_section", _get_lang()), expanded=False):
                 with st.form("notebook_settings_form"):
-                    new_name = st.text_input("Đổi tên notebook", value=nb.name)
-                    new_tags_str = st.text_input("Edit tag của notebook", value=", ".join(nb.tags) if getattr(nb, 'tags', None) else "")
-                    submitted_settings = st.form_submit_button("Lưu cài đặt", type="primary")
+                    new_name = st.text_input(t("rename_notebook", _get_lang()), value=nb.name)
+                    new_tags_str = st.text_input(t("edit_tags", _get_lang()), value=", ".join(nb.tags) if getattr(nb, 'tags', None) else "")
+                    submitted_settings = st.form_submit_button(t("save_settings", _get_lang()), type="primary")
                 if submitted_settings:
                     if not new_name.strip():
-                        st.error("Vui lòng nhập tên notebook hợp lệ")
+                        st.error(t("invalid_notebook_name", _get_lang()))
                     else:
                         new_tags_list = [t.strip() for t in new_tags_str.split(',') if t.strip()]
                         store.update_notebook(
@@ -2277,7 +2306,7 @@ def main():
                             description=nb.description or "",
                             tags=new_tags_list,
                         )
-                        st.success("Đã cập nhật cài đặt notebook")
+                        st.success(t("notebook_settings_saved", _get_lang()))
                         st.rerun()
 
         with tab_sources:
@@ -2323,15 +2352,15 @@ def main():
         if cache_key not in st.session_state:
             raw_notebooks = store.list_notebooks(q, fav, dfrom, dto)
             # Apply additional sorting based on user preference
-            if sort_by == "Date Created (Oldest First)":
+            if sort_by == "date_old":
                 raw_notebooks.sort(key=lambda n: n.created_at or "", reverse=False)
-            elif sort_by == "Last Updated":
+            elif sort_by == "updated":
                 raw_notebooks.sort(key=lambda n: n.updated_at or n.created_at or "", reverse=True)
-            elif sort_by == "Name (A-Z)":
+            elif sort_by == "name_az":
                 raw_notebooks.sort(key=lambda n: n.name.lower())
-            elif sort_by == "Name (Z-A)":
+            elif sort_by == "name_za":
                 raw_notebooks.sort(key=lambda n: n.name.lower(), reverse=True)
-            # Default "Date Created (Newest First)" is already handled by store.list_notebooks
+            # Default "date_new" is already handled by store.list_notebooks
             
             st.session_state[cache_key] = raw_notebooks
         
@@ -2350,13 +2379,13 @@ def main():
         if total_pages > 1:
             col1, col2, col3 = st.columns([1, 2, 1])
             with col1:
-                if st.button("← Previous", disabled=current_page == 0):
+                if st.button(t("prev", _get_lang()), disabled=current_page == 0):
                     st.session_state['notebooks_page'] = max(0, current_page - 1)
                     st.rerun()
             with col2:
-                st.write(f"Page {current_page + 1} of {total_pages}")
+                st.write(t("page_of", _get_lang()).format(cur=current_page + 1, total=total_pages))
             with col3:
-                if st.button("Next →", disabled=current_page >= total_pages - 1):
+                if st.button(t("next", _get_lang()), disabled=current_page >= total_pages - 1):
                     st.session_state['notebooks_page'] = min(total_pages - 1, current_page + 1)
                     st.rerun()
         
@@ -2375,7 +2404,7 @@ def main():
                     _render_notebook_card(nb, cols[col_index])
         
         # Show total count
-        st.caption(f"Showing {start_idx + 1}-{end_idx} of {len(notebooks)} notebooks")
+        st.caption(t("showing_range", _get_lang()).format(start=start_idx + 1, end=end_idx, total=len(notebooks)))
         
         # Clear cache button for debugging (disable during searching)
         if st.button(t("refresh_notebooks", lang), help=t("refresh_notebooks_help", lang), disabled=st.session_state.get('is_searching', False)):

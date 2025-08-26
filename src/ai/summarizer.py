@@ -1,5 +1,5 @@
 """
-Summarization module for ElevateAI.
+Summarization module for Thunderbolts.
 Handles intelligent content summarization with various strategies.
 """
 from typing import List, Dict, Any, Optional, Union

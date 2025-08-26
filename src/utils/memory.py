@@ -1,5 +1,5 @@
 """
-Memory management system for ElevateAI.
+Memory management system for Thunderbolts.
 Implements short-term and long-term memory for conversation context.
 """
 import json

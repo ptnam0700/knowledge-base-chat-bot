@@ -1,5 +1,5 @@
 """
-Embedding generation module for ElevateAI.
+Embedding generation module for Thunderbolts.
 Handles text embedding generation using various models.
 """
 import numpy as np

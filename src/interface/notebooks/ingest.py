@@ -79,20 +79,48 @@ def ingest_url(notebook_id: str, url: str) -> int:
             youtube_result = ctx["youtube_processor"].process(url)
             
             if youtube_result and youtube_result.get("text"):
-                # Add metadata for better context
-                metadata = youtube_result.get("metadata", {})
-                source_info = {
-                    "text": youtube_result["text"],
-                    "source": url,
-                    "type": "youtube",
-                    "notebook_id": notebook_id,
-                    "youtube_title": metadata.get("title", ""),
-                    "youtube_author": metadata.get("uploader", ""),
-                    "youtube_duration": metadata.get("duration", 0),
-                    "youtube_upload_date": metadata.get("upload_date", ""),
-                }
+                # Check if we have multiple text chunks
+                text_chunks = youtube_result.get("text_chunks", [])
                 
-                return _commit_processed_texts([source_info])
+                if text_chunks and len(text_chunks) > 1:
+                    # Process multiple chunks
+                    logger.info(f"YouTube video generated {len(text_chunks)} text chunks")
+                    
+                    # Create source info for each chunk
+                    metadata = youtube_result.get("metadata", {})
+                    source_infos = []
+                    
+                    for i, chunk_text in enumerate(text_chunks):
+                        source_info = {
+                            "text": chunk_text,
+                            "source": url,
+                            "type": "youtube",
+                            "notebook_id": notebook_id,
+                            "youtube_title": metadata.get("title", ""),
+                            "youtube_author": metadata.get("uploader", ""),
+                            "youtube_duration": metadata.get("duration", 0),
+                            "youtube_upload_date": metadata.get("upload_date", ""),
+                            "chunk_index": i,
+                            "total_chunks": len(text_chunks),
+                        }
+                        source_infos.append(source_info)
+                    
+                    return _commit_processed_texts(source_infos)
+                else:
+                    # Fallback to single text processing
+                    metadata = youtube_result.get("metadata", {})
+                    source_info = {
+                        "text": youtube_result["text"],
+                        "source": url,
+                        "type": "youtube",
+                        "notebook_id": notebook_id,
+                        "youtube_title": metadata.get("title", ""),
+                        "youtube_author": metadata.get("uploader", ""),
+                        "youtube_duration": metadata.get("duration", 0),
+                        "youtube_upload_date": metadata.get("upload_date", ""),
+                    }
+                    
+                    return _commit_processed_texts([source_info])
             else:
                 # If no transcript available, try to get basic info
                 video_info = ctx["youtube_processor"].get_video_info(url)

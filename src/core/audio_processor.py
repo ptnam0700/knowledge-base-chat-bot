@@ -1,5 +1,5 @@
 """
-Audio processing module for ElevateAI.
+Audio processing module for Thunderbolts.
 Handles audio extraction, enhancement, and vocal separation.
 """
 import os
@@ -89,7 +89,7 @@ class AudioProcessor(BaseProcessor):
             AudioProcessingError: If extraction fails
         """
         try:
-            import moviepy.editor as mp
+            from moviepy.video.io.VideoFileClip import VideoFileClip
         except ImportError:
             raise AudioProcessingError("moviepy not installed. Please install it to extract audio from video.")
         
@@ -98,7 +98,7 @@ class AudioProcessor(BaseProcessor):
         
         try:
             # Load video and extract audio
-            video = mp.VideoFileClip(str(video_path))
+            video = VideoFileClip(str(video_path))
             audio = video.audio
             
             # Save audio to temporary file

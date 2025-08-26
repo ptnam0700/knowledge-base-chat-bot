@@ -1,5 +1,5 @@
 """
-Caching utilities for ElevateAI application.
+Caching utilities for Thunderbolts application.
 """
 import hashlib
 import pickle

@@ -1,5 +1,5 @@
 """
-Main entry point for ElevateAI application.
+Main entry point for Thunderbolts application.
 """
 import sys
 import os
@@ -29,7 +29,7 @@ def main():
         settings.ensure_directories()
         
         # Log startup
-        logger.info("Starting ElevateAI application")
+        logger.info("Starting Thunderbolts application")
         logger.info(f"Project root: {project_root}")
         logger.info(f"Python path: {sys.path}")
         

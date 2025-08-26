@@ -1,5 +1,5 @@
 """
-Function calling module for ElevateAI.
+Function calling module for Thunderbolts.
 Handles Azure OpenAI function calling capabilities.
 """
 import json

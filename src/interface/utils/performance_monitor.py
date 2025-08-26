@@ -1,5 +1,5 @@
 """
-Performance monitoring utility for ElevateAI Notebooks.
+Performance monitoring utility for Thunderbolts Notebooks.
 Helps identify bottlenecks and optimize loading times.
 """
 import time

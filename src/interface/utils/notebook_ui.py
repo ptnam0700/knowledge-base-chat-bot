@@ -2,11 +2,27 @@ from __future__ import annotations
 
 from typing import List
 
+from src.interface.utils.prompt_text import t
+from src.interface.app_context import get_context
+from src.utils.settings_manager import get_settings
+
+def _get_lang() -> str:
+    try:
+        persisted = get_settings()
+        default_lang = persisted.get('language', 'vi')
+    except Exception:
+        default_lang = 'vi'
+    import streamlit as st
+    lang = st.session_state.get('language')
+    if not lang and 'app_settings' in st.session_state:
+        lang = (st.session_state.app_settings or {}).get('language')
+    return lang or default_lang
+
 
 class NotebookUI:
     @staticmethod
     def tabs_labels() -> List[str]:
-        return ["📚 **Sources**", "📓 **Notebook**", "🎨 **Studio**"]
+        return [t("tab_sources", _get_lang()), t("tab_notebook", _get_lang()), t("tab_studio", _get_lang())]
 
     @staticmethod
     def chat_style_css(max_height: int = 500) -> str:

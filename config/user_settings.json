@@ -1,4 +1,6 @@
 {
+  "language": "vi",
+  "auto_save": true,
   "openai_temperature": 0.5,
   "openai_max_tokens": 2000,
   "openai_top_p": 0.9,
@@ -22,16 +24,10 @@
   "store_conversations": true,
   "memory_retention_days": 30,
   "auto_cleanup": true,
-  "theme": "light",
-  "language": "vi",
-  "auto_save": true,
-  "show_processing_time": true,
-  "show_confidence_score": true,
-  "enable_animations": true,
   "max_file_size_mb": 500,
   "enable_debug_mode": false,
   "cache_enabled": true,
-  "log_level": "DEBUG",
+  "log_level": "INFO",
   "enable_metrics": true,
   "backup_enabled": true
 }

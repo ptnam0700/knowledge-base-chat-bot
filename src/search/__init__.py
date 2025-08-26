@@ -1,5 +1,5 @@
 """
-Semantic search and retrieval modules for ElevateAI.
+Semantic search and retrieval modules for Thunderbolts.
 """
 
 from .semantic_search import SemanticSearchEngine

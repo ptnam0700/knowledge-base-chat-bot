@@ -1,5 +1,5 @@
 """
-Prompt engineering module for ElevateAI.
+Prompt engineering module for Thunderbolts.
 Handles advanced prompt construction with role prompts, few-shot examples, and chain-of-thought.
 """
 from typing import List, Dict, Any, Optional, Tuple

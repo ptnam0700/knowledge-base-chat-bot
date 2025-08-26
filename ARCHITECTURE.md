@@ -1,13 +1,13 @@
-# ElevateAI Architecture Documentation
+# Thunderbolts Architecture Documentation
 
 ## 🏗️ System Overview
 
-ElevateAI is a comprehensive AI-powered application designed for intelligent video and text summarization. The system follows a modular, object-oriented architecture with clear separation of concerns and scalable design patterns.
+Thunderbolts is a comprehensive AI-powered application designed for intelligent video and text summarization. The system follows a modular, object-oriented architecture with clear separation of concerns and scalable design patterns.
 
 ## 📁 Source Code Structure
 
 ```
-ElevateAI_SummarizeApplication/
+Thunderbolts_SummarizeApplication/
 ├── src/                          # Core source code
 │   ├── ai/                      # AI integration layer
 │   ├── analysis/                # Text analysis and processing
@@ -39,7 +39,7 @@ Handles raw data ingestion and preprocessing:
 - **AudioProcessor**: Audio extraction, enhancement, noise reduction, vocal separation
 - **VideoProcessor**: Video processing, audio extraction from video files
 - **DocumentProcessor**: Text extraction from PDF, DOCX, TXT, and web URLs
-- **SpeechToTextProcessor**: Audio transcription using Whisper and OpenAI APIs
+- **SpeechToTextProcessor**: Audio transcription using OpenAI Whisper API (primary) or local fallback
 
 ### 2. Analysis Layer (`src/analysis/`)
 Performs intelligent text analysis and preprocessing:
@@ -62,6 +62,7 @@ Implements advanced search and retrieval:
 - **RetrievalEngine**: Multi-hop retrieval for complex queries
 - **Reranker**: Advanced result ranking using multiple scoring strategies
 - **WebSearchEngine**: Web search fallback when local content is insufficient
+- **YouTube Processor**: yt-dlp metadata/audio fetch, resilient config, transcript+description
 
 ### 5. AI Integration Layer (`src/ai/`)
 Handles AI model interactions:
@@ -76,13 +77,13 @@ Handles AI model interactions:
 ### 6. Interface Layer (`src/interface/`)
 Provides user interaction:
 
-- **StreamlitApp**: Main web application with file upload and query interface
-- **UIComponents**: Reusable UI components for consistent user experience
+- **StreamlitApp**: Notebooks and Settings pages with i18n. Settings tabs reordered: Interface → Model → Search → Audio → Memory → Advanced. Theme selector removed; unused flags removed.
+- **UIComponents** and i18n: Centralized text registry in `src/interface/utils/prompt_text.py`.
 
 ### 7. Utilities (`src/utils/`)
 Supporting infrastructure:
 
-- **Logger**: Centralized logging with configurable levels
+- **Logger**: Centralized logging with configurable levels using app name
 - **Exceptions**: Custom exception hierarchy for error handling
 - **Cache**: Multi-level caching for embeddings, LLM responses, and processed files
 - **Performance**: Performance monitoring, batch processing, and optimization

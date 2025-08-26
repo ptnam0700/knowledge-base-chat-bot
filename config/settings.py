@@ -1,5 +1,5 @@
 """
-Configuration settings for ElevateAI application.
+Configuration settings for Thunderbolts application.
 """
 import os
 from pathlib import Path
@@ -14,7 +14,7 @@ class Settings:
         self._load_env_file()
 
         # Application Settings
-        self.app_name = os.getenv("APP_NAME", "ElevateAI")
+        self.app_name = os.getenv("APP_NAME", "Thunderbolts")
         self.app_version = os.getenv("APP_VERSION", "1.0.0")
         self.debug = os.getenv("DEBUG", "False").lower() == "true"
         self.log_level = os.getenv("LOG_LEVEL", "INFO")
@@ -86,11 +86,10 @@ class Settings:
         self.supported_languages = ["vi", "en", "zh", "ja", "ko"]
         
         # Interface Settings
-        self.theme = os.getenv("THEME", "light")
+        # Removed per reliance on Streamlit global theme
         self.auto_save = os.getenv("AUTO_SAVE", "True").lower() == "true"
-        self.show_processing_time = os.getenv("SHOW_PROCESSING_TIME", "True").lower() == "true"
-        self.show_confidence_score = os.getenv("SHOW_CONFIDENCE_SCORE", "True").lower() == "true"
-        self.enable_animations = os.getenv("ENABLE_ANIMATIONS", "True").lower() == "true"
+        # Deprecated UI flags removed for simplicity:
+        # show_processing_time, show_confidence_score, enable_animations
         
         # Performance Settings
         self.disable_nltk_downloads = os.getenv("DISABLE_NLTK_DOWNLOADS", "True").lower() == "true"

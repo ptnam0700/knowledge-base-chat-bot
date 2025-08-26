@@ -1,4 +1,4 @@
-# Environment Setup Guide for ElevateAI with LangChain/LangGraph
+# Environment Setup Guide for Thunderbolts with LangChain/LangGraph
 
 ## Quick Start
 

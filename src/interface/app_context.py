@@ -54,7 +54,9 @@ def _build_context() -> Dict[str, Any]:
     context["video_processor"] = VideoProcessor()
     context["document_processor"] = DocumentProcessor()
     context["speech_processor"] = SpeechToTextProcessor()
-    context["youtube_processor"] = SimpleYouTubeProcessor()
+    context["youtube_processor"] = SimpleYouTubeProcessor({
+        "speech_processor": context["speech_processor"],
+    })
 
     # Analysis
     context["text_analyzer"] = TextAnalyzer()

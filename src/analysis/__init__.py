@@ -1,5 +1,5 @@
 """
-Text analysis and preprocessing modules for ElevateAI.
+Text analysis and preprocessing modules for Thunderbolts.
 """
 
 from .text_analyzer import TextAnalyzer

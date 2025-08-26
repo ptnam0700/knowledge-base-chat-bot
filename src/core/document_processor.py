@@ -1,5 +1,5 @@
 """
-Document processing module for ElevateAI.
+Document processing module for Thunderbolts.
 Handles text extraction from various document formats with LangChain integration.
 """
 from pathlib import Path

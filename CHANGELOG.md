@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to ElevateAI will be documented in this file.
+All notable changes to Thunderbolts will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -67,7 +67,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### System Requirements
 - Python 3.9+
-- Java 17+ (Java 21 recommended) for LanguageTool
 - Conda environment support
 - Optional: FFmpeg for video processing
 
@@ -94,6 +93,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - API endpoint for programmatic access
 - Mobile-responsive interface improvements
 
+### Changes
+- i18n: Localized all Streamlit UI (Notebooks, Settings), added Import/Export section translations
+- Settings: Removed show_processing_time, show_confidence_score, enable_animations; removed local theme selector; reordered tabs (Interface, Model, Search, Audio, Memory, Advanced)
+- YouTube: Updated yt-dlp options to reduce 403/format errors; prioritized audio-only formats; switched to OpenAI Whisper API; included video description in chunks
+- Sorting: Use stable internal keys for notebook sorting independent of translated labels
+
 ---
 
-For more details about each release, see the [GitHub releases page](https://github.com/elevateai/elevateai/releases).
+For more details about each release, see the [GitHub releases page](https://github.com/Thunderbolts/Thunderbolts/releases).

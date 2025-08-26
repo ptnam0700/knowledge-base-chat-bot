@@ -1,5 +1,5 @@
 """
-Performance optimization utilities for ElevateAI.
+Performance optimization utilities for Thunderbolts.
 """
 import time
 import psutil

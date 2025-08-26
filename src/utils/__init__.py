@@ -1,3 +1,3 @@
 """
-Utility functions and classes for ElevateAI.
+Utility functions and classes for Thunderbolts.
 """

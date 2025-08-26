@@ -1,8 +1,8 @@
-# ElevateAI Memory System Documentation
+# Thunderbolts Memory System Documentation
 
 ## 🧠 Overview
 
-ElevateAI implements a sophisticated dual-memory system inspired by human cognitive architecture, featuring both short-term and long-term memory components that work together to provide contextual awareness and conversation continuity.
+Thunderbolts implements a sophisticated dual-memory system inspired by human cognitive architecture, featuring both short-term and long-term memory components that work together to provide contextual awareness and conversation continuity.
 
 ## 🏗️ Architecture
 
@@ -143,8 +143,7 @@ turn_id = memory_manager.add_conversation_turn(
     user_input="What is quantum computing?",
     assistant_response="Quantum computing uses quantum mechanics...",
     context_used=["physics_context"],
-    processing_time=2.5,
-    confidence_score=0.9
+    # timing and confidence are internal metrics; not exposed in UI settings
 )
 
 # Add a fact
@@ -210,7 +209,7 @@ memory_manager.short_term.clear_context()
 - **Memory Statistics**: View current memory usage and statistics
 - **Conversation History**: Browse recent conversation turns
 - **Memory Controls**: Clear, consolidate, or cleanup memories
-- **Memory Settings**: Configure memory behavior
+- **Settings Integration**: Memory-related toggles available in Settings → Memory tab (i18n enabled)
 
 ### Memory Visualization
 - Memory usage graphs
@@ -303,4 +302,4 @@ pytest tests/test_streamlit_memory.py -v
 - **Semantic Networks**: Connected knowledge graphs
 - **Emotional Memory**: Sentiment and emotional context
 
-This memory system provides ElevateAI with human-like conversation continuity and contextual awareness, making interactions more natural and personalized over time.
+This memory system provides Thunderbolts with human-like conversation continuity and contextual awareness, making interactions more natural and personalized over time.

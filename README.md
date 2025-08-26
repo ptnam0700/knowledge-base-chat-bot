@@ -1,7 +1,7 @@
-# ElevateAI - Intelligent Content Analysis & Summarization Application
+# Thunderbolts - Intelligent Content Analysis & Summarization Application
 
 ## 🎯 Project Overview
-ElevateAI is an advanced AI-powered application that provides intelligent analysis and summarization of various content types including videos, audio files, and documents. The application features a sophisticated memory system and uses cutting-edge AI technologies including speech-to-text, natural language processing, vector databases, and large language models.
+Thunderbolts is an advanced AI-powered application that provides intelligent analysis and summarization of various content types including videos, audio files, and documents. The application features a sophisticated memory system and uses cutting-edge AI technologies including speech-to-text, natural language processing, vector databases, and large language models.
 
 ## 🚀 Features
 - **Multi-format Support**: Process video, audio, PDF, DOCX, TXT files, and YouTube links
@@ -14,6 +14,8 @@ ElevateAI is an advanced AI-powered application that provides intelligent analys
 - **Interactive Interface**: User-friendly Streamlit multi-page web application
 - **Graceful Fallbacks**: Works even when some dependencies are missing
 - **Notebook System**: Organize and manage multiple knowledge collections
+- **YouTube Transcript + Description**: yt-dlp metadata/audio with OpenAI Whisper API transcription; video description included in chunks
+- **Full i18n UI**: Multi-language interface across Notebooks and Settings with live language switching
 
 ## 🔧 Recent Fixes & Improvements (v1.1.0)
 - **✅ Issue #1: Embedding Model Configuration**
@@ -35,6 +37,21 @@ ElevateAI is an advanced AI-powered application that provides intelligent analys
   - Fixed column reference errors in notebook interface
   - Improved error handling in Streamlit components
   - Enhanced user experience and stability
+
+- **✅ YouTube Processing Enhancements**
+  - Updated yt-dlp configuration (User-Agent, retries, 720p fallback) to reduce 403/format errors
+  - Robust audio-only download prioritizing m4a/webm without FFmpeg postprocessing (fixes ffprobe codec warnings)
+  - Switched transcript generation to OpenAI Whisper API; included video description and transcript in chunking
+
+- **✅ Internationalization (i18n)**
+  - Implemented translation registry for all Streamlit components on Notebooks and Settings
+  - Language is saved and applied across pages; Import/Export Settings section localized
+  - Fixed sorting to use internal keys independent of translations
+
+- **✅ Settings Simplification**
+  - Removed unused flags: show_processing_time, show_confidence_score, enable_animations
+  - Removed local theme selector (use Streamlit global theme)
+  - Reordered tabs: Interface → Model → Search → Audio → Memory → Advanced
 
 ## 🏗️ Architecture
 The application follows an Object-Oriented Programming (OOP) design with the following main components:
@@ -72,6 +89,7 @@ The application follows an Object-Oriented Programming (OOP) design with the fol
    - Notebook management system
    - File upload handling
    - Result visualization
+   - i18n registry (`src/interface/utils/prompt_text.py`) and Settings Manager
 
 7. **Memory System** (`src/utils/memory/`)
    - Short-term and long-term memory
@@ -80,6 +98,7 @@ The application follows an Object-Oriented Programming (OOP) design with the fol
 
 ## 🛠️ Technology Stack
 - **Audio/Video Processing**: moviepy, ffmpeg-python, whisper, librosa
+- **YouTube**: yt-dlp (2025.8.x+) with resilient headers/retries
 - **Text Processing**: SpaCy, NLTK, pdfplumber, python-docx, pyvi (Vietnamese)
 - **Vector Database**: FAISS, sentence-transformers, ChromaDB
 - **AI/ML**: Azure OpenAI, OpenAI API, LangChain, Transformers
@@ -89,7 +108,7 @@ The application follows an Object-Oriented Programming (OOP) design with the fol
 
 ## 📁 Project Structure
 ```
-ElevateAI_SummarizeApplication/
+Thunderbolts_SummarizeApplication/
 ├── src/                          # Core source code
 │   ├── ai/                      # AI integration layer
 │   │   ├── llm_client.py       # LLM client (Azure OpenAI, OpenAI)
@@ -153,7 +172,6 @@ ElevateAI_SummarizeApplication/
 ### Prerequisites
 - **Python**: 3.9 or higher (3.11 recommended)
 - **Conda**: Environment management
-- **Java**: 17+ (Java 21 recommended) for LanguageTool grammar checking
   - Download from: https://adoptium.net/temurin/releases/
 - **FFmpeg**: For video/audio processing (optional but recommended)
 - **API Credentials**: Azure OpenAI or OpenAI API (optional - app works without them)
@@ -162,7 +180,7 @@ ElevateAI_SummarizeApplication/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd ElevateAI_SummarizeApplication
+   cd Thunderbolts_SummarizeApplication
    ```
 
 2. **Create and activate conda environment**
@@ -205,10 +223,6 @@ ElevateAI_SummarizeApplication/
    ```
    - **Note**: App works without API keys but with limited functionality
 
-5. **Setup Java for LanguageTool (recommended)**
-   - Install Java 21 from https://adoptium.net/temurin/releases/
-   - Set JAVA_HOME environment variable
-   - Add Java to PATH
 
 6. **Run the application**
    ```bash
@@ -280,6 +294,8 @@ If you prefer manual setup:
 - **Memory System**: Short-term and long-term memory for conversation continuity
 - **Context Awareness**: Remembers previous interactions and learned facts
 - **Notebook Management**: Organize content into themed collections
+- **i18n**: Multi-language UI for all pages; change language in Settings → Interface
+- **YouTube**: Transcript via OpenAI Whisper API, description included in chunks
 
 ## 🔧 Configuration
 
@@ -298,6 +314,7 @@ Edit `config/settings.py` for advanced customization:
 - Processing strategies and chunking settings
 - Database settings and vector dimensions
 - Performance tuning and resource limits
+- YouTube/Whisper and search behavior toggles
 
 ## 🧪 Testing
 Run the test suite:
@@ -344,18 +361,6 @@ The application includes intelligent caching:
 5. **File Processing Errors**: Check file formats and sizes
 
 ### Common Issues & Solutions
-
-#### Java/LanguageTool Issues
-- **Error**: "Detected java 11.0. LanguageTool requires Java >= 17"
-- **Solution**: Install Java 21 and set JAVA_HOME:
-  ```bash
-  # Windows (PowerShell as Admin)
-  [Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Java\jdk-21", "Machine")
-  
-  # Linux/macOS
-  export JAVA_HOME=/usr/lib/jvm/java-21-openjdk
-  export PATH=$JAVA_HOME/bin:$PATH
-  ```
 
 #### NumPy Compatibility Issues
 - **Error**: "A module that was compiled using NumPy 1.x cannot be run in NumPy 2.x"

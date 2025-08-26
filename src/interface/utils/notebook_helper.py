@@ -8,31 +8,46 @@ import streamlit as st
 
 from src.interface.notebooks import store
 from src.interface.app_context import get_context
+from src.utils.settings_manager import get_settings
 from src.interface.utils.notebook_ui import NotebookUI
 from src.interface.notebooks.ingest import ingest_uploaded_files, ingest_url
 from pathlib import Path
 import json
 from typing import Dict, Any
 from PIL import Image
+from src.interface.utils.prompt_text import t
+
+
+def _get_lang() -> str:
+    try:
+        persisted = get_settings()
+        default_lang = persisted.get('language', 'vi')
+    except Exception:
+        default_lang = 'vi'
+    lang = st.session_state.get('language')
+    if not lang and 'app_settings' in st.session_state:
+        lang = (st.session_state.app_settings or {}).get('language')
+    return lang or default_lang
 
 
 class NotebookHelper:
     @staticmethod
     def render_filters():
-        with st.expander("🔍 Filter Notebooks", expanded=False):
+        lang = _get_lang()
+        with st.expander(t("filter_title", lang), expanded=False):
             col1, col2, col3 = st.columns(3)
 
             with col1:
-                q = st.text_input("Search by name/desc/tag", key="home_q", placeholder="Type to search...")
-                favorite_only = st.checkbox("Favorites only", key="home_fav")
+                q = st.text_input(t("search_by_name_desc_tag", lang), key="home_q", placeholder=t("search", lang))
+                favorite_only = st.checkbox(t("favorites_only", lang), key="home_fav")
 
             with col2:
-                date_from = st.date_input("From date", value=None, key="home_from")
-                date_to = st.date_input("To date", value=None, key="home_to")
+                date_from = st.date_input(t("date_from", lang), value=None, key="home_from")
+                date_to = st.date_input(t("date_to", lang), value=None, key="home_to")
 
             with col3:
                 st.write("")
-                if st.button("Clear filters", key="clear_filters"):
+                if st.button(t("clear_filters", lang), key="clear_filters"):
                     st.session_state.pop("home_q", None)
                     st.session_state.pop("home_fav", None)
                     st.session_state.pop("home_from", None)
@@ -111,23 +126,30 @@ class NotebookHelper:
                         st.rerun()
                 
                 with action_cols[2]:
-                    if st.button("🗑️", key=f"del_{nb.id}", help="Delete notebook", use_container_width=True):
+                    if st.button("🗑️", key=f"del_{nb.id}", help=t("delete_notebook", _get_lang()), use_container_width=True):
                         st.session_state[f"confirm_del_{nb.id}"] = True
 
                 # Confirmation dialog
                 if st.session_state.get(f"confirm_del_{nb.id}"):
-                    st.warning("Are you sure you want to delete this notebook?")
+                    st.warning(t("confirm_delete_notebook", _get_lang()))
                     col_confirm1, col_confirm2 = st.columns(2)
                     with col_confirm1:
-                        if st.button("Yes, delete", key=f"confirm_btn_{nb.id}", type="primary"):
+                        if st.button(t("yes_delete", _get_lang()), key=f"confirm_btn_{nb.id}", type="primary"):
                             store.delete_notebook(nb.id)
                             st.session_state.pop(f"confirm_del_{nb.id}", None)
                             # Clear card cache after deletion
                             if card_key in st.session_state:
                                 del st.session_state[card_key]
+                            # Invalidate all notebooks caches and reset pagination
+                            for key in list(st.session_state.keys()):
+                                if key.startswith('notebooks_cache_'):
+                                    del st.session_state[key]
+                            st.session_state['notebooks_page'] = 0
+                            # Ensure we are on list view after deletion
+                            st.query_params["view"] = "list"
                             st.rerun()
                     with col_confirm2:
-                        if st.button("Cancel", key=f"cancel_btn_{nb.id}"):
+                        if st.button(t("cancel", _get_lang()), key=f"cancel_btn_{nb.id}"):
                             st.session_state.pop(f"confirm_del_{nb.id}", None)
                             st.rerun()
 

@@ -1,5 +1,5 @@
 """
-Settings Manager for ElevateAI application.
+Settings Manager for Thunderbolts application.
 Handles loading, saving, and applying settings across the application.
 """
 
@@ -55,12 +55,8 @@ class SettingsManager:
             'auto_cleanup': True,
             
             # Interface settings
-            'theme': 'light',
             'language': 'vi',
             'auto_save': True,
-            'show_processing_time': True,
-            'show_confidence_score': True,
-            'enable_animations': True,
             
             # Advanced settings
             'max_file_size_mb': 500,
@@ -145,15 +141,14 @@ class SettingsManager:
         """Apply current settings to the application."""
         current_settings = self.load_settings()
         
-        # Apply theme
-        if current_settings.get('theme') == 'dark':
-            # Note: Streamlit doesn't support dynamic theme switching
-            # This would need to be handled in the main app configuration
-            pass
+        # Theme removed; rely on Streamlit global theme configuration
         
         # Apply language
         language = current_settings.get('language', 'vi')
-        # Set language for the application
+        try:
+            st.session_state['language'] = language
+        except Exception:
+            pass
         
         # Apply debug mode
         if current_settings.get('enable_debug_mode'):
@@ -293,7 +288,7 @@ class SettingsManager:
                 'max_memory_context': settings.get('max_memory_context', 3)
             },
             'interface': {
-                'theme': settings.get('theme', 'light'),
+                # theme removed
                 'language': settings.get('language', 'vi')
             }
         }

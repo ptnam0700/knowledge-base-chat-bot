@@ -1,5 +1,5 @@
 """
-Text cleaning module for ElevateAI.
+Text cleaning module for Thunderbolts.
 Handles text normalization, cleaning, and preprocessing.
 """
 import re

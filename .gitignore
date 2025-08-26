@@ -238,6 +238,9 @@ uploads/
 # Streamlit
 .streamlit/secrets.toml
 
+#Cursor
+.cursor
+
 # Jupyter
 .jupyter/
 

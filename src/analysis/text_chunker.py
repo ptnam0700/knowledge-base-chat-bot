@@ -1,5 +1,5 @@
 """
-Text chunking module for ElevateAI.
+Text chunking module for Thunderbolts.
 Handles intelligent text segmentation for vector database storage.
 """
 import re

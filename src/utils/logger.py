@@ -1,5 +1,5 @@
 """
-Logging utilities for ElevateAI application.
+Logging utilities for Thunderbolts application.
 """
 import logging
 import sys

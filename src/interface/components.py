@@ -1,5 +1,5 @@
 """
-UI components for ElevateAI Streamlit interface.
+UI components for Thunderbolts Streamlit interface.
 """
 try:
     import streamlit as st
@@ -22,13 +22,13 @@ class UIComponents:
     def render_header():
         """Render application header."""
         st.set_page_config(
-            page_title="ElevateAI - Intelligent Summarization",
+            page_title="Thunderbolts - Intelligent Summarization",
             page_icon="🚀",
             layout="wide",
             initial_sidebar_state="expanded"
         )
         
-        st.title("🚀 ElevateAI")
+        st.title("🚀 Thunderbolts")
         st.markdown("### Intelligent Video/Text Summarization Application")
         st.markdown("---")
     
@@ -76,7 +76,7 @@ class UIComponents:
             'store_conversations': True,
             'memory_retention_days': 30,
             'auto_cleanup': True,
-            'theme': 'light',
+            # theme removed; handled globally by Streamlit
             'language': 'vi',
             'auto_save': True,
             'show_processing_time': True,

@@ -1,5 +1,5 @@
 """
-LLM client module for ElevateAI.
+LLM client module for Thunderbolts.
 Handles Azure OpenAI and OpenAI API interactions.
 """
 import json

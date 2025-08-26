@@ -1,5 +1,5 @@
 """
-AI integration modules for ElevateAI.
+AI integration modules for Thunderbolts.
 """
 
 from .llm_client import LLMClient

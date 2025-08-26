@@ -1,5 +1,5 @@
 """
-Vector database module for ElevateAI using FAISS.
+Vector database module for Thunderbolts using FAISS.
 Handles vector storage, indexing, and similarity search.
 """
 import numpy as np

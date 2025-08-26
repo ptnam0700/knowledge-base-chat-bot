@@ -1,5 +1,5 @@
 """
-Web search fallback module for ElevateAI.
+Web search fallback module for Thunderbolts.
 Handles external web search when local content is insufficient.
 """
 import requests

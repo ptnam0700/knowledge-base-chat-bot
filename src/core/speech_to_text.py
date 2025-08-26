@@ -1,5 +1,5 @@
 """
-Speech-to-text processing module for ElevateAI.
+Speech-to-text processing module for Thunderbolts.
 Handles audio transcription using Whisper and other STT models.
 """
 from pathlib import Path
