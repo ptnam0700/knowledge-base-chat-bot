@@ -146,7 +146,7 @@ UI_TEXTS = {
     "please_enter_question": {"vi": "Vui lòng nhập câu hỏi", "en": "Please enter a question", "zh": "请输入问题", "ja": "質問を入力してください", "ko": "질문을 입력하세요"},
     "searching_answering": {"vi": "Đang tìm và trả lời…", "en": "Searching and answering…", "zh": "正在检索并回答…", "ja": "検索と回答中…", "ko": "검색 및 응답 중…"},
     # Notebooks page
-    "page_notebooks_title": {"vi": "📓 Thunderbolts Notebooks", "en": "📓 Thunderbolts Notebooks", "zh": "📓 Thunderbolts 笔记本", "ja": "📓 Thunderbolts ノートブック", "ko": "📓 Thunderbolts 노트북"},
+    "page_notebooks_title": {"vi": "📓 ROAD TO 8M Notebooks", "en": "📓 ROAD TO 8M Notebooks", "zh": "📓 ROAD TO 8M 笔记本", "ja": "📓 ROAD TO 8M ノートブック", "ko": "📓 ROAD TO 8M 노트북"},
     "page_notebooks_subtitle": {"vi": "Tạo, tổ chức và trò chuyện với notebooks của bạn.", "en": "Create, organize and chat with your notebooks.", "zh": "创建、管理并与您的笔记本对话。", "ja": "ノートブックを作成・整理し、対話します。", "ko": "노트북을 생성하고 정리하며 대화하세요."},
     "create_new_notebook": {"vi": "Tạo Notebook Mới", "en": "Create New Notebook", "zh": "创建新笔记本", "ja": "新しいノートブックを作成", "ko": "새 노트북 만들기"},
     "your_notebooks": {"vi": "Notebooks của bạn", "en": "Your Notebooks", "zh": "你的笔记本", "ja": "あなたのノートブック", "ko": "내 노트북"},
@@ -255,7 +255,7 @@ UI_TEXTS = {
 # ===== Settings page labels (vi/en/zh/ja/ko) =====
 SETTINGS_TEXTS = {
     "settings_title": {"vi": "⚙️ Cài đặt", "en": "⚙️ Settings", "zh": "⚙️ 设置", "ja": "⚙️ 設定", "ko": "⚙️ 설정"},
-    "settings_subtitle": {"vi": "Cấu hình các thông số cho ứng dụng Thunderbolts", "en": "Configure Thunderbolts application", "zh": "配置 Thunderbolts 应用", "ja": "Thunderbolts アプリケーションを設定", "ko": "Thunderbolts 애플리케이션 설정"},
+    "settings_subtitle": {"vi": "Cấu hình các thông số cho ứng dụng ROAD TO 8M", "en": "Configure ROAD TO 8M application", "zh": "配置 ROAD TO 8M 应用", "ja": "ROAD TO 8M アプリケーションを設定", "ko": "ROAD TO 8M 애플리케이션 설정"},
     # Tabs
     "tab_model": {"vi": "🤖 Model", "en": "🤖 Model", "zh": "🤖 模型", "ja": "🤖 モデル", "ko": "🤖 모델"},
     "tab_search": {"vi": "🔍 Tìm kiếm", "en": "🔍 Search", "zh": "🔍 搜索", "ja": "🔍 検索", "ko": "🔍 검색"},
@@ -387,10 +387,10 @@ UI_TEXTS.update({
     "page_of": {"vi": "Trang {cur} / {total}", "en": "Page {cur} of {total}", "zh": "第 {cur} / {total} 页", "ja": "{cur} / {total} ページ", "ko": "{cur}/{total} 페이지"},
     "showing_range": {"vi": "Hiển thị {start}-{end} / {total} notebooks", "en": "Showing {start}-{end} of {total} notebooks", "zh": "显示第 {start}-{end} 条，共 {total} 个笔记本", "ja": "{total} 件中 {start}–{end} 件を表示", "ko": "총 {total}개 중 {start}–{end} 표시"},
     # App home (app.py)
-    "app_home_title": {"vi": "📓 Thunderbolts Notebooks", "en": "📓 Thunderbolts Notebooks", "zh": "📓 Thunderbolts 笔记本", "ja": "📓 Thunderbolts ノートブック", "ko": "📓 Thunderbolts 노트북"},
+    "app_home_title": {"vi": "📓 ROAD TO 8M Notebooks", "en": "📓 ROAD TO 8M Notebooks", "zh": "📓 ROAD TO 8M 笔记本", "ja": "📓 ROAD TO 8M ノートブック", "ko": "📓 ROAD TO 8M 노트북"},
     "app_home_welcome": {"vi": "Chào mừng đến với hệ thống quản lý tri thức!", "en": "Welcome to your knowledge management system!", "zh": "欢迎来到知识管理系统！", "ja": "ナレッジ管理システムへようこそ！", "ko": "지식 관리 시스템에 오신 것을 환영합니다!"},
     "expander_app_intro": {"vi": "📘 Giới thiệu ứng dụng", "en": "📘 About the Application", "zh": "📘 应用介绍", "ja": "📘 アプリ概要", "ko": "📘 애플리케이션 소개"},
-    "expander_team_intro": {"vi": "👥 Nhóm Thunderbolts", "en": "👥 Thunderbolts Team", "zh": "👥 Thunderbolts 团队", "ja": "👥 Thunderbolts チーム", "ko": "👥 Thunderbolts 팀"},
+    "expander_team_intro": {"vi": "👥 Nhóm ROAD TO 8M", "en": "👥 ROAD TO 8M Team", "zh": "👥 ROAD TO 8M 团队", "ja": "👥 ROAD TO 8M チーム", "ko": "👥 ROAD TO 8M 팀"},
     "features_table_header_feature": {"vi": "Tính năng", "en": "Feature", "zh": "功能", "ja": "機能", "ko": "기능"},
     "features_table_header_desc": {"vi": "Mô tả", "en": "Description", "zh": "描述", "ja": "説明", "ko": "설명"},
     "features_table_header_tech": {"vi": "Công nghệ", "en": "Technologies", "zh": "技术", "ja": "技術", "ko": "기술"},

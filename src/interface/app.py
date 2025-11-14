@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Main entry point for Thunderbolts Streamlit multi-page application.
+Main entry point for ROAD TO 8M Streamlit multi-page application.
 """
 
 import streamlit as st
@@ -23,7 +23,7 @@ def _get_lang() -> str:
 
 def main():
     st.set_page_config(
-        page_title="Thunderbolts Notebooks",
+        page_title="ROAD TO 8M Notebooks",
         page_icon="📓",
         layout="wide",
         initial_sidebar_state="expanded"
@@ -60,7 +60,6 @@ def main():
             c3.write(t("feat_tech_stack", lang))
 
         st.markdown("---")
-        st.markdown(f"**{t('project_repo', lang)}:** [Thunderbolts](https://github.com/Thunderbolts/Thunderbolts)")
 
 if __name__ == "__main__":
     main()
