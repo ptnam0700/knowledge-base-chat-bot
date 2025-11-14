@@ -30,8 +30,9 @@ class Settings:
         # OpenAI Configuration (and compatible providers)
         self.openai_api_key = os.getenv("OPENAI_API_KEY")
         self.openai_base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
-        self.openai_embedding_model = os.getenv("OPENAI_EMBEDDING_MODEL")
         self.openai_chat_model = os.getenv("OPENAI_CHAT_MODEL")
+        self.openai_embedding_api_key = os.getenv("OPENAI_EMBEDDINGS_API_KEY")
+        self.openai_embedding_model = os.getenv("OPENAI_EMBEDDING_MODEL")
         
         # OpenAI Model Parameters
         self.openai_temperature = float(os.getenv("OPENAI_TEMPERATURE", "0.7"))

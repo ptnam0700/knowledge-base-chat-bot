@@ -83,7 +83,7 @@ class EmbeddingGenerator:
                     self.embedding_model = 'text-embedding-ada-002'  # Default fallback
                 
                 self.logger.info(f"[EMBEDDING][ONLINE][LOAD] Initializing OpenAI embedding API model: {self.embedding_model}, base_url: {self.openai_base_url}, key: {key_masked}")
-                self.openai_client = OpenAI(api_key=self.settings.openai_api_key, base_url=self.openai_base_url)
+                self.openai_client = OpenAI(api_key=self.settings.openai_embedding_api_key, base_url=self.openai_base_url)
                 self.logger.info(f"[EMBEDDING][ONLINE][SUCCESS] Ready to use online model: {self.embedding_model}, base_url: {self.openai_base_url}, key: {key_masked}")
                 self.online_available = True
             except Exception as e:

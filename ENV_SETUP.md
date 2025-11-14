@@ -1,5 +1,14 @@
 # Environment Setup Guide for Thunderbolts with LangChain/LangGraph
 
+## Quick Start: Using UV in macOS for ease 
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv python install 3.11
+uv venv --python 3.11
+source .venv/bin/activate
+python -m ensurepip --upgrade
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+
 ## Quick Start
 
 1. **Create `.env` file with your configuration**
