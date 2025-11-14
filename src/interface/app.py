@@ -62,23 +62,5 @@ def main():
         st.markdown("---")
         st.markdown(f"**{t('project_repo', lang)}:** [Thunderbolts](https://github.com/Thunderbolts/Thunderbolts)")
 
-    with st.expander(t("expander_team_intro", lang), expanded=True):
-        members = [
-            ("ThangND8", t("team_role_leader", lang)),
-            ("PhuongNA2", t("team_role_member", lang)),
-            ("LongDP2", t("team_role_member", lang)),
-            ("ThanhNQ21", t("team_role_member", lang)),
-            ("TruongTQ6", t("team_role_member", lang)),
-            ("DangVN3", t("team_role_member", lang)),
-            ("TungDN8", t("team_role_member", lang)),
-            ("PhuongNH23", t("team_role_member", lang)),
-            ("DucNA48", t("team_role_member", lang)),
-        ]
-        # Display in 3 columns grid
-        grid_cols = st.columns(3)
-        for idx, (name, role) in enumerate(members):
-            with grid_cols[idx % 3]:
-                st.markdown(f"- **{name}** — {role}")
-
 if __name__ == "__main__":
     main()

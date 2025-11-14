@@ -18,12 +18,12 @@ try:
 except ImportError:
     DOCX_AVAILABLE = False
 
+# PowerPoint support (PPTX via python-pptx)
 try:
-    from bs4 import BeautifulSoup
-    import requests
-    WEB_AVAILABLE = True
+    from pptx import Presentation
+    PPTX_AVAILABLE = True
 except ImportError:
-    WEB_AVAILABLE = False
+    PPTX_AVAILABLE = False
 
 # LangChain document loaders and text splitters (v0.2 compatible with fallbacks)
 # Loaders moved to langchain_community; splitters moved to langchain_text_splitters
@@ -46,10 +46,22 @@ try:
     except Exception:
         UnstructuredExcelLoader = None  # type: ignore
         EXCEL_LOADER_AVAILABLE = False
+    # PowerPoint-specific loader (PPT/PPTX)
+    try:
+        from langchain_community.document_loaders import UnstructuredPowerPointLoader  # type: ignore
+        PPT_LOADER_AVAILABLE = True
+    except Exception:
+        UnstructuredPowerPointLoader = None  # type: ignore
+        PPT_LOADER_AVAILABLE = False
     LOADER_AVAILABLE = True
 except Exception:
     try:
-        from langchain.document_loaders import PyPDFLoader, TextLoader, Docx2txtLoader, UnstructuredFileLoader  # type: ignore
+        from langchain.document_loaders import (
+            PyPDFLoader,
+            TextLoader,
+            Docx2txtLoader,
+            UnstructuredFileLoader,  # type: ignore
+        )
         try:
             from langchain.document_loaders import PyMuPDFLoader  # type: ignore
             PYMUPDF_LOADER_AVAILABLE = True
@@ -62,11 +74,20 @@ except Exception:
         except Exception:
             UnstructuredExcelLoader = None  # type: ignore
             EXCEL_LOADER_AVAILABLE = False
+        # PowerPoint-specific loader (PPT/PPTX)
+        try:
+            from langchain.document_loaders import UnstructuredPowerPointLoader  # type: ignore
+            PPT_LOADER_AVAILABLE = True
+        except Exception:
+            UnstructuredPowerPointLoader = None  # type: ignore
+            PPT_LOADER_AVAILABLE = False
         LOADER_AVAILABLE = True
     except Exception:
         LOADER_AVAILABLE = False
         PYMUPDF_LOADER_AVAILABLE = False
         EXCEL_LOADER_AVAILABLE = False
+        PPT_LOADER_AVAILABLE = False
+        UnstructuredPowerPointLoader = None  # type: ignore
 
 try:
     from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -87,6 +108,14 @@ try:
     PANDAS_AVAILABLE = True
 except Exception:
     PANDAS_AVAILABLE = False
+
+# URL/text extraction dependencies (assumed present elsewhere in the project)
+try:
+    import requests
+    from bs4 import BeautifulSoup
+    WEB_AVAILABLE = True
+except Exception:
+    WEB_AVAILABLE = False
 
 
 class DocumentProcessor(BaseProcessor):
@@ -131,9 +160,6 @@ class DocumentProcessor(BaseProcessor):
         Raises:
             TextProcessingError: If processing fails
         """
-        # Check if input is URL
-        if isinstance(input_data, str) and (input_data.startswith('http://') or input_data.startswith('https://')):
-            return self.extract_text_from_url(input_data)
         
         # Process as file
         if not self.validate_input(input_data):
@@ -207,6 +233,13 @@ class DocumentProcessor(BaseProcessor):
                 else:
                     # Fallback: read with pandas
                     return self.extract_text_from_xlsx(file_path)
+            elif suffix in ('.ppt', '.pptx'):
+                # Prefer dedicated PowerPoint loader if available
+                if PPT_LOADER_AVAILABLE and UnstructuredPowerPointLoader is not None:
+                    loader = UnstructuredPowerPointLoader(str(file_path))  # type: ignore
+                else:
+                    # Fallback to generic unstructured loader
+                    loader = UnstructuredFileLoader(str(file_path))
             else:
                 # Fallback to unstructured loader
                 loader = UnstructuredFileLoader(str(file_path))
@@ -235,6 +268,9 @@ class DocumentProcessor(BaseProcessor):
             return self.extract_text_from_txt(file_path)
         elif suffix == '.xlsx':
             return self.extract_text_from_xlsx(file_path)
+        elif suffix in ('.ppt', '.pptx'):
+            # Legacy PPTX extraction via python-pptx; .ppt best-effort (may fail)
+            return self.extract_text_from_pptx(file_path)
         else:
             raise UnsupportedFormatError(f"Unsupported format: {suffix}")
     
@@ -296,6 +332,37 @@ class DocumentProcessor(BaseProcessor):
             
         except Exception as e:
             raise TextProcessingError(f"Failed to extract text from DOCX: {e}")
+
+    def extract_text_from_pptx(self, ppt_path: Path) -> str:
+        """
+        Extract text from PPT/PPTX file using python-pptx as a legacy fallback.
+
+        NOTE:
+            - This supports .pptx reliably.
+            - For .ppt (legacy binary format), python-pptx may fail; in that case
+              a TextProcessingError is raised and upstream can fall back to LC loaders
+              or treat the format as unsupported.
+        """
+        if not PPTX_AVAILABLE:
+            raise TextProcessingError(
+                "PPTX processing not available. Please install 'python-pptx'."
+            )
+
+        try:
+            prs = Presentation(str(ppt_path))
+            text_content: List[str] = []
+
+            for slide in prs.slides:
+                for shape in slide.shapes:
+                    # Most text-bearing shapes expose a .text attribute
+                    if hasattr(shape, "text") and shape.text:
+                        stripped = shape.text.strip()
+                        if stripped:
+                            text_content.append(stripped)
+
+            return "\n\n".join(text_content)
+        except Exception as e:
+            raise TextProcessingError(f"Failed to extract text from PPT/PPTX: {e}")
 
     def extract_text_from_xlsx(self, xlsx_path: Path) -> str:
         """

@@ -6,8 +6,7 @@ uv python install 3.11
 uv venv --python 3.11
 source .venv/bin/activate
 python -m ensurepip --upgrade
-pip install --upgrade pip setuptools wheel
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
 ## Quick Start
 

@@ -1306,54 +1306,10 @@ def _render_sources_panel(nb: store.Notebook):
     st.subheader(t("add_sources", lang))
     uploaded = st.file_uploader(
         t("upload_files", lang),
-        type=["mp4","avi","mov","mkv","mp3","wav","pdf","docx","txt","xlsx"],
+        type=["mp4","avi","mov","mkv","mp3","wav","pdf","docx","txt","xlsx", "ppt", "pptx", "csv"],
         accept_multiple_files=True,
         key="nb_upload",
     )
-    url = st.text_input(
-        t("or_add_link", lang),
-        key="nb_url",
-        placeholder=t("enter_urls_placeholder", lang),
-    )
-    # Internet search UI (keys are namespaced per-notebook to avoid cross-notebook leakage)
-    st.markdown(t("search_internet", lang))
-    with st.container():
-        search_col, btn_col = st.columns([5,1])
-        with search_col:
-            search_query = st.text_input(
-                t("search_internet", lang),
-                key=f"nb_web_search_{nb.id}",
-                max_chars=100,
-                placeholder=t("enter_keywords_placeholder", lang),
-                label_visibility="collapsed",
-            )
-        with btn_col:
-            do_search = st.button(t("search", lang), key=f"nb_web_search_btn_{nb.id}", use_container_width=True)
-    # Persist search results in session
-    results_key = f"nb_web_results_{nb.id}"
-    if results_key not in st.session_state:
-        st.session_state[results_key] = []
-    if do_search and search_query and search_query.strip():
-        try:
-            ctx = get_context()
-            urls = ctx["web_search"].web_search(search_query.strip())
-            st.session_state[results_key] = urls
-            if not urls:
-                st.info(t("no_results_for_query", lang))
-        except Exception as e:
-            st.error(f"{t('web_search_failed', lang)}: {e}")
-            st.session_state[results_key] = []
-    # Render selectable results
-    if st.session_state.get(results_key):
-        st.markdown("#### " + t("search_internet", lang))
-        select_all = st.checkbox(t("select_all", lang), key=f"nb_web_select_all_{nb.id}", value=False)
-        selected_urls = []
-        for idx, link in enumerate(st.session_state[results_key][:20]):
-            checked = st.checkbox(link, key=f"nb_web_result_{nb.id}_{idx}", value=select_all)
-            if checked:
-                selected_urls.append(link)
-    else:
-        selected_urls = []
     if st.button(t("add_to_notebook", lang), key="nb_add_btn"):
         added = 0
         duplicates: list[str] = []
@@ -1371,46 +1327,6 @@ def _render_sources_panel(nb: store.Notebook):
                     continue
                 store.add_source(nb.id, type="file", title=f.name, source_path_or_url=f.name)
                 existing_keys.add(key)
-        if url:
-            src_type = ("youtube" if ("youtube.com" in url or "youtu.be" in url) else "url")
-            key = (src_type, url)
-            if key in existing_keys:
-                duplicates.append(url)
-            else:
-                added += ingest_url(nb.id, url)
-                # Try to resolve a better title for url/youtube
-                resolved_title = url
-                try:
-                    if src_type == 'youtube':
-                        yinfo = get_context()["youtube_processor"].get_video_info(url)
-                        resolved_title = yinfo.get("title") or url
-                    else:
-                        page_title = get_context()["document_processor"].get_page_title(url)
-                        resolved_title = page_title or url
-                except Exception:
-                    pass
-                store.add_source(nb.id, type=src_type, title=resolved_title, source_path_or_url=url)
-                existing_keys.add(key)
-        # Add selected web search links
-        for weblink in selected_urls:
-            src_type = ("youtube" if ("youtube.com" in weblink or "youtu.be" in weblink) else "url")
-            key = (src_type, weblink)
-            if key in existing_keys:
-                duplicates.append(weblink)
-                continue
-            try:
-                resolved_title = weblink
-                if src_type == 'youtube':
-                    yinfo = get_context()["youtube_processor"].get_video_info(weblink)
-                    resolved_title = yinfo.get("title") or weblink
-                else:
-                    page_title = get_context()["document_processor"].get_page_title(weblink)
-                    resolved_title = page_title or weblink
-                added += ingest_url(nb.id, weblink)
-                store.add_source(nb.id, type=src_type, title=resolved_title, source_path_or_url=weblink)
-                existing_keys.add(key)
-            except Exception:
-                continue
         if duplicates and added == 0:
             if len(duplicates) == 1:
                 st.warning(t("source_exists", lang))
@@ -1421,8 +1337,6 @@ def _render_sources_panel(nb: store.Notebook):
         # Clear web search results and query after any Add action to avoid repetition
         try:
             st.session_state[results_key] = []
-            st.session_state[f"nb_web_search_{nb.id}"] = ""
-            st.session_state[f"nb_web_select_all_{nb.id}"] = False
         except Exception:
             pass
         if added > 0:
@@ -2108,7 +2022,7 @@ def _render_create_view():
         )
         uploaded = st.file_uploader(
             t("field_upload_files", _get_lang()),
-            type=["mp4","avi","mov","mkv","mp3","wav","pdf","docx","txt","xlsx"],
+            type=["mp4","avi","mov","mkv","mp3","wav","pdf","docx","txt","xlsx", "pptx", "ppt", "csv"],
             accept_multiple_files=True,
         )
         url = st.text_input(t("field_add_link", _get_lang()))
@@ -2210,104 +2124,12 @@ def main():
                 st.rerun()
 
         # Three-tab layout: Notebook | Studio | Source (Settings moved under Studio)
-        tab_notebook, tab_studio, tab_sources = st.tabs([t("tab_notebook", _get_lang()), t("tab_studio", _get_lang()), t("tab_sources", _get_lang())])
+        tab_notebook, tab_sources = st.tabs([t("tab_notebook", _get_lang()), t("tab_sources", _get_lang())])
 
         with tab_notebook:
             _notebook_overview(nb)
             st.divider()
             _render_chat(nb)
-
-        with tab_studio:
-            with st.expander(t("studio_section", _get_lang()), expanded=True):
-                # Compact 3x2 grid: Generate | Download (adjacent)
-                # Row 1: DOCX
-                r1c1, r1c2 = st.columns([10, 1])
-                with r1c1:
-                    _render_studio_actions(nb, layout="docx_only")
-                with r1c2:
-                    latest_docx = _get_latest_docx_path(nb.id)
-                    if latest_docx.exists():
-                        with open(latest_docx, "rb") as f:
-                            st.download_button("⬇️", f, file_name=latest_docx.name, help=t("download_docx_help", _get_lang()))
-
-                # Row 2: Audio
-                r2c1, r2c2 = st.columns([10, 1])
-                with r2c1:
-                    _render_studio_actions(nb, layout="audio_only")
-                with r2c2:
-                    latest_audio = _get_latest_audio_path(nb.id)
-                    if latest_audio.exists():
-                        with open(latest_audio, "rb") as f:
-                            st.download_button("⬇️", f, file_name=latest_audio.name, help=t("download_audio_help", _get_lang()))
-
-                # Row 3: Mindmap (interactive viewer with background generation)
-                r3c1, r3c2 = st.columns([10, 1])
-                with r3c1:
-                    task_map_key = f"studio_mindmap_task_{nb.id}"
-                    if task_map_key not in _TASK_STATUS:
-                        _TASK_STATUS[task_map_key] = {"running": False, "file_path": None, "is_html": False, "error": None}
-                    map_state = _TASK_STATUS.get(task_map_key, {"running": False})
-                    map_label = t("generating_audio", _get_lang()).replace("audio", "mindmap") if map_state.get("running") else t("btn_mindmap", _get_lang())
-                    if st.button(map_label, key=f"btn_mindmap_{nb.id}", disabled=map_state.get("running", False)):
-                        _TASK_STATUS[task_map_key] = {"running": True, "file_path": None, "is_html": False, "error": None}
-                        threading.Thread(target=_background_generate_mindmap, args=(nb.id, task_map_key), daemon=True).start()
-                    if map_state.get("error"):
-                        st.error(f"❌ Lỗi: {map_state['error']}")
-                    # Inline viewer if exists
-                    html_path = _get_latest_mindmap_html_path(nb.id)
-                    png_path = _get_latest_mindmap_path(nb.id)
-                    dot_path = _get_notebook_folder(nb.id) / "mindmap_latest.dot"
-                    with st.expander("🎥 " + t("open_mindmap", _get_lang()), expanded=True):
-                        if html_path.exists():
-                            try:
-                                with open(html_path, "r", encoding="utf-8") as f:
-                                    components.html(f.read(), height=650, width=900, scrolling=True)
-                            except Exception:
-                                pass
-                        elif _is_valid_image(png_path):
-                            st.image(str(png_path), caption=t("btn_mindmap", _get_lang()), use_container_width=True)
-                        elif dot_path.exists():
-                            try:
-                                st.graphviz_chart(dot_path.read_text(encoding="utf-8"))
-                            except Exception:
-                                pass
-                with r3c2:
-                    # Open mindmap: prefer interactive HTML, fallback to PNG download
-                    html_path = _get_latest_mindmap_html_path(nb.id)
-                    png_path = _get_latest_mindmap_path(nb.id)
-
-                    if html_path.exists():
-                        try:
-                            with open(html_path, "r", encoding="utf-8") as f:
-                                st.download_button("⬇️", f, file_name=html_path.name, help=t("open_mindmap", _get_lang()) + " (HTML)")
-                        except Exception:
-                            pass
-                    elif _is_valid_image(png_path):
-                        with open(png_path, "rb") as f:
-                            st.download_button("⬇️", f, file_name=png_path.name, help=t("download_mindmap_help", _get_lang()) + " (PNG)")
-
-            # Notes section (renamed from Studio inner content)
-            with st.expander(t("notes_section", _get_lang()), expanded=True):
-                _render_studio_panel(nb)
-            st.divider()
-            with st.expander(t("settings_section", _get_lang()), expanded=False):
-                with st.form("notebook_settings_form"):
-                    new_name = st.text_input(t("rename_notebook", _get_lang()), value=nb.name)
-                    new_tags_str = st.text_input(t("edit_tags", _get_lang()), value=", ".join(nb.tags) if getattr(nb, 'tags', None) else "")
-                    submitted_settings = st.form_submit_button(t("save_settings", _get_lang()), type="primary")
-                if submitted_settings:
-                    if not new_name.strip():
-                        st.error(t("invalid_notebook_name", _get_lang()))
-                    else:
-                        new_tags_list = [t.strip() for t in new_tags_str.split(',') if t.strip()]
-                        store.update_notebook(
-                            nb.id,
-                            name=new_name.strip(),
-                            description=nb.description or "",
-                            tags=new_tags_list,
-                        )
-                        st.success(t("notebook_settings_saved", _get_lang()))
-                        st.rerun()
 
         with tab_sources:
             _render_sources_panel(nb)

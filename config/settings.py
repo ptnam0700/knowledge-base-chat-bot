@@ -52,7 +52,7 @@ class Settings:
         self.max_file_size_mb = int(os.getenv("MAX_FILE_SIZE_MB", "500"))
         self.supported_video_formats = ["mp4", "avi", "mov", "mkv", "webm"]
         self.supported_audio_formats = ["mp3", "wav", "m4a", "flac", "ogg"]
-        self.supported_document_formats = ["pdf", "docx", "txt", "xlsx"]
+        self.supported_document_formats = ["pdf", "docx", "txt", "xlsx", "ppt", "pptx", "csv"]
 
         # Document extraction performance/caching
         self.enable_extract_cache = os.getenv("ENABLE_EXTRACT_CACHE", "True").lower() == "true"

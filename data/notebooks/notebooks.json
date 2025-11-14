@@ -1,0 +1,64 @@
+[
+  {
+    "id": "346cf6b0-9f17-4c4c-ae67-4685325f8c16",
+    "name": "Test Pickleball",
+    "created_at": "2025-11-14T11:06:11.567271",
+    "updated_at": "2025-11-14T11:31:51.929814",
+    "is_favorite": false,
+    "description": "pick docs",
+    "tags": [
+      "pick"
+    ],
+    "sources": [
+      {
+        "id": "121cdb53-5ddd-46f4-a5ec-451f0354e872",
+        "type": "file",
+        "title": "749-signed-signed-signed-dieu-le-giai-picleball-2024.pdf",
+        "source_path_or_url": "749-signed-signed-signed-dieu-le-giai-picleball-2024.pdf",
+        "added_at": "2025-11-14T11:06:18.545081",
+        "meta": {}
+      },
+      {
+        "id": "56c6435e-11d5-40ef-b6c9-1a684c84e8e4",
+        "type": "file",
+        "title": "WORKSHOP1 (1).pptx",
+        "source_path_or_url": "WORKSHOP1 (1).pptx",
+        "added_at": "2025-11-14T11:31:41.585419",
+        "meta": {}
+      }
+    ],
+    "examples": [
+      "Giải Pickleball huyện Bắc Quang năm 2024 có những quy định gì để đảm bảo tính công bằng và chuyên nghiệp?",
+      "So với năm trước, giải năm 2024 có sự thay đổi nào về nội dung thi đấu và đối tượng tham gia?",
+      "Thời gian và địa điểm tổ chức giải đấu năm 2024 là khi nào và ở đâu?"
+    ],
+    "overview": "**Tổng quan Giải Pickleball huyện Bắc Quang năm 2024**\n\nGiải Pickleball huyện Bắc Quang năm 2024 sẽ diễn ra với các quy định cụ thể nhằm đảm bảo tính công bằng và chuyên nghiệp.\n\n- **Đối tượng tham gia**: Vận động viên có hộ khẩu thường trú tại huyện Bắc Quang, từ 18 tuổi trở lên, không trong thời gian kỷ luật.\n- **Nội dung thi đấu**: Giải lãnh đạo có 2 nội dung (Đôi Nam, Đôi Nam Nữ); Giải phong trào có 6 nội dung chia theo nhóm tuổi.\n- **Thời gian và địa điểm**: Khai mạc vào ngày 27/12/2024, thi đấu từ 27-29/12/2024 tại Công ty xây lắp cầu đường bộ 118.\n- **Luật thi đấu**: Áp dụng luật của Liên đoàn Pickleball quốc tế, với các điều chỉnh cụ thể về giao bóng và cách tính điểm.\n- **Khen thưởng**: Giải lãnh đạo và phong trào có nhiều giải thưởng cho các đội đạt thành tích cao.\n- **Hồ sơ đăng ký**: Các đơn vị cần nộp hồ sơ đăng ký trước 11h00 ngày 20/12/2024.\n\nGiải đấu hứa hẹn sẽ thu hút sự tham gia đông đảo và tạo cơ hội giao lưu thể thao giữa các đơn vị trong huyện.",
+    "generated_hash": ""
+  },
+  {
+    "id": "f37a3dca-b2a2-4454-b04a-8ab59c82678e",
+    "name": "aa",
+    "created_at": "2025-11-14T11:35:35.902527",
+    "updated_at": "2025-11-14T11:35:48.052538",
+    "is_favorite": false,
+    "description": "aaa",
+    "tags": [],
+    "sources": [
+      {
+        "id": "855e281d-d55b-46c8-b73a-f14f588ca773",
+        "type": "file",
+        "title": "WORKSHOP1 (1).pptx",
+        "source_path_or_url": "WORKSHOP1 (1).pptx",
+        "added_at": "2025-11-14T11:35:37.929977",
+        "meta": {}
+      }
+    ],
+    "examples": [
+      "What are the key features of the AI application that participants will develop during the workshop?",
+      "How does the integration of Azure OpenAI API with Python enhance the functionality of the applications created in the workshop?",
+      "In what ways do the proposed applications, such as automated email generation and meeting note summarization, compare in terms of their potential impact on productivity?"
+    ],
+    "overview": "Workshop 1: Xây Dựng Ứng Dụng AI Thực Tế Sử Dụng Python và Azure OpenAI API\n\n- **Mục tiêu**: Thiết kế và triển khai ứng dụng AI tự động hóa các nhiệm vụ lặp đi lặp lại theo nhu cầu cá nhân.\n- **Nội dung học**: Tự động hóa việc tạo văn bản, tóm tắt hoặc các quy trình khác; tích hợp API Azure OpenAI với mã Python; xây dựng trợ lý hữu ích cho nhiều nhiệm vụ.\n- **Lựa chọn ứng dụng**: Tạo công cụ như: Tạo email tự động, tự động nhập dữ liệu, tóm tắt ghi chú cuộc họp, hoặc bot trả lời câu hỏi.\n- **Hướng dẫn sử dụng công cụ AI**: Mỗi mentee sẽ làm việc độc lập, nhưng có thể chia sẻ tiến độ và phản hồi không chính thức.\n- **Sản phẩm cuối cùng**: Một ứng dụng Python hoạt động sử dụng API Azure OpenAI, kèm theo mẫu prompt, hướng dẫn sử dụng cơ bản và video demo ngắn.\n- **Thời gian**: Workshop kéo dài từ 9:00 đến 16:00, bao gồm thời gian thảo luận, thực hành và trình bày.\n\nKết luận: Hãy tham gia workshop để biến những nhiệm vụ lặp đi lặp lại thành các giải pháp tự động hóa hiệu quả!",
+    "generated_hash": ""
+  }
+]
